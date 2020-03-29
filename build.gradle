@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'net.kaaass'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Lombok
+    implementation 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
+    // JUnit
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
