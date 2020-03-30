@@ -1,8 +1,12 @@
 package net.kaaass.kflight.data.structure;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Comparator;
+import java.util.TreeMap;
 
 /**
  * 红黑树的简单实现
@@ -431,5 +435,112 @@ public class RBTree<K, V> {
             }
         }
         x.color = NodeColor.BLACK;
+    }
+
+    /**
+     * 通过 key 找到一个结点，若重复，则找到其中一个
+     *
+     * @return 若找不到则返回 null
+     */
+    public TreeNode<K, V> findOne(K key) {
+        var cur = root;
+        while (notNull(cur)) {
+            int cmp = comparator.compare(key, cur.key);
+            if (cmp < 0)
+                cur = cur.left;
+            else if (cmp > 0)
+                cur = cur.right;
+            else
+                return cur;
+        }
+        return null;
+    }
+
+    /**
+     * 找到小于 key 的最大节点
+     *
+     * @return 若找不到则返回 null
+     */
+    public TreeNode<K, V> findPrev(K key) {
+        var cur = root;
+        while (notNull(cur)) {
+            int cmp = comparator.compare(key, cur.key);
+            if (cmp > 0) {
+                // 当前小于 key，向右查找
+                if (notNull(cur.right))
+                    cur = cur.right;
+                else
+                    return cur;
+            } else {
+                // 当前大于 key，找上一节点
+                if (notNull(cur.left)) {
+                    cur = cur.left;
+                } else {
+                    var prev = cur.parent;
+                    var tCur = cur;
+                    while (notNull(prev) && tCur == prev.left) {
+                        tCur = prev;
+                        prev = prev.parent;
+                    }
+                    return prev;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 找到大于 key 的最小节点
+     *
+     * @return 若找不到则返回 null
+     */
+    public TreeNode<K, V> findNext(K key) {
+        var cur = root;
+        while (cur != null) {
+            int cmp = comparator.compare(key, cur.key);
+            if (cmp < 0) {
+                if (notNull(cur.left))
+                    cur = cur.left;
+                else
+                    return cur;
+            } else {
+                if (notNull(cur.right)) {
+                    cur = cur.right;
+                } else {
+                    var prev = cur.parent;
+                    var tCur = cur;
+                    while (notNull(prev) && tCur == prev.right) {
+                        tCur = prev;
+                        prev = prev.parent;
+                    }
+                    return prev;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 找到不小于 key 的最小节点
+     *
+     * @return 若找不到则返回 null
+     */
+    public TreeNode<K, V> findLowerBound(K key) {
+        var prev = findPrev(key);
+        if (isNull(prev))
+            return getMinimumNode();
+        return nextOf(prev);
+    }
+
+    /**
+     * 找到不大于 key 的最大节点
+     *
+     * @return 若找不到则返回 null
+     */
+    public TreeNode<K, V> findUpperBound(K key) {
+        var next = findNext(key);
+        if (isNull(next))
+            return getMaximumNode();
+        return prevOf(next);
     }
 }
