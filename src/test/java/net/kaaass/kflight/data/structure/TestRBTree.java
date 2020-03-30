@@ -176,4 +176,41 @@ public class TestRBTree {
         assertEquals("11", tree.findUpperBound(8).value);
         assertEquals("10", tree.findUpperBound(9).value);
     }
+
+    @Test
+    public void testCompareNode() {
+        var tree = new RBTree<Integer, String>(Comparator.naturalOrder());
+        tree.insert(1, "1");
+        tree.insert(2, "2");
+        tree.insert(5, "3");
+        tree.insert(5, "4");
+        tree.insert(5, "5");
+        tree.insert(6, "6");
+        tree.insert(8, "7");
+        tree.insert(3, "8");
+        tree.insert(8, "9");
+        tree.insert(9, "10");
+        tree.insert(8, "11");
+        //
+        assertEquals(0, tree.compareNode(
+                tree.findOne(1),
+                tree.findOne(1)
+        ));
+        assertTrue(tree.compareNode(
+                tree.findOne(1),
+                tree.findOne(2)
+        ) < 0);
+        assertTrue(tree.compareNode(
+                tree.findOne(9),
+                tree.findOne(6)
+        ) > 0);
+        assertTrue(tree.compareNode(
+                tree.findLowerBound(5),
+                tree.findUpperBound(5)
+        ) < 0);
+        assertTrue(tree.compareNode(
+                tree.findUpperBound(8),
+                tree.findLowerBound(8)
+        ) > 0);
+    }
 }

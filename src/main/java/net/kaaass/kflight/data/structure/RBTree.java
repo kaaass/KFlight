@@ -543,4 +543,24 @@ public class RBTree<K, V> {
             return getMaximumNode();
         return prevOf(next);
     }
+
+    /**
+     * 比较两节点在树中的位置
+     */
+    public int compareNode(TreeNode<K, V> a, TreeNode<K, V> b) {
+        if (a == b)
+            return 0;
+        if (a.key != b.key)
+            return comparator.compare(a.key, b.key);
+        // Case: key 相同时
+        var key = a.key;
+        var cur = a;
+        // 可以使用LCA优化，不过重复数据量有限，一般不需要
+        while (notNull(a) && cur.key == key) {
+            if (cur == b)
+                return -1;
+            cur = nextOf(cur);
+        }
+        return 1;
+    }
 }
