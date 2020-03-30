@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Comparator;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 /**
  * 红黑树的单元测试
@@ -212,5 +213,31 @@ public class TestRBTree {
                 tree.findUpperBound(8),
                 tree.findLowerBound(8)
         ) > 0);
+    }
+
+    @Test
+    public void testHas() {
+        var tree = new RBTree<Integer, String>(Comparator.naturalOrder());
+        tree.insert(1, "1");
+        tree.insert(2, "2");
+        tree.insert(5, "3");
+        tree.insert(5, "4");
+        tree.insert(5, "5");
+        tree.insert(6, "6");
+        tree.insert(8, "7");
+        tree.insert(3, "8");
+        tree.insert(8, "9");
+        tree.insert(9, "10");
+        tree.insert(8, "11");
+        //
+        assertTrue(tree.has(1));
+        assertTrue(tree.has(2));
+        assertTrue(tree.has(3));
+        assertFalse(tree.has(4));
+        assertTrue(tree.has(5));
+        //
+        assertTrue(tree.has(1, "1"));
+        assertTrue(tree.has(5, "5"));
+        assertFalse(tree.has(5, "7"));
     }
 }

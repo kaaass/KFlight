@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.Comparator;
-import java.util.TreeMap;
 
 /**
  * 红黑树的简单实现
@@ -438,6 +437,25 @@ public class RBTree<K, V> {
     }
 
     /**
+     * 删除某一键值对
+     */
+    public boolean deletePair(K key, V val) {
+        var cur = findLowerBound(key);
+        if (isNull(cur))
+            return false;
+        // 遍历寻找节点
+        while (notNull(cur) && cur.key.equals(key)) {
+            if (cur.value.equals(val)) {
+                // 找到并删除节点
+                delete(cur);
+                return true;
+            }
+            cur = nextOf(cur);
+        }
+        return false;
+    }
+
+    /**
      * 通过 key 找到一个结点，若重复，则找到其中一个
      *
      * @return 若找不到则返回 null
@@ -550,17 +568,40 @@ public class RBTree<K, V> {
     public int compareNode(TreeNode<K, V> a, TreeNode<K, V> b) {
         if (a == b)
             return 0;
-        if (a.key != b.key)
+        if (!a.key.equals(b.key))
             return comparator.compare(a.key, b.key);
         // Case: key 相同时
         var key = a.key;
         var cur = a;
         // 可以使用LCA优化，不过重复数据量有限，一般不需要
-        while (notNull(a) && cur.key == key) {
+        while (notNull(a) && cur.key.equals(key)) {
             if (cur == b)
                 return -1;
             cur = nextOf(cur);
         }
         return 1;
+    }
+
+    /**
+     * 树中是否存在 key
+     */
+    public boolean has(K key) {
+        return notNull(findOne(key));
+    }
+
+    /**
+     * 树中是否存在键值对
+     */
+    public boolean has(K key, V val) {
+        var cur = findLowerBound(key);
+        if (isNull(cur))
+            return false;
+        // 遍历寻找节点
+        while (notNull(cur) && cur.key.equals(key)) {
+            if (cur.value.equals(val))
+                return true;
+            cur = nextOf(cur);
+        }
+        return false;
     }
 }

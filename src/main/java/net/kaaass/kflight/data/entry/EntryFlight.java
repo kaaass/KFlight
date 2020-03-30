@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Setter
-public class EntryFlight {
+public class EntryFlight implements IEntry {
 
     /**
      * 航班状态
