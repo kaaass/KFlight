@@ -8,12 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * 索引的单元测试
@@ -67,11 +68,68 @@ public class TestIndex {
 
     @Test
     public void testFind() {
-        // TODO
+        // findOne
+        assertEquals(data.get(0), intIndex.findOneRaw(1));
+        assertEquals(data.get(2), intIndex.findOneRaw(2));
+        assertEquals(data.get(2), strIndex.findOneRaw("3"));
+        assertEquals(data.get(6), strIndex.findOneRaw("7"));
+
+        // findAll
+        var ret = intIndex.findAll(7);
+        assertEquals(1, ret.size());
+        assertTrue(ret.contains(data.get(7)));
+
+        ret = intIndex.findAll(3);
+        assertEquals(2, ret.size());
+        assertTrue(ret.contains(data.get(1)));
+        assertTrue(ret.contains(data.get(3)));
+
+        // findBetween
+        ret = intIndex.findBetween(2, 4);
+        assertEquals(6, ret.size());
+        for (int i = 1; i <= 6; i++) {
+            assertTrue(ret.contains(data.get(i)));
+        }
+
+        ret = intIndex.findBetween(6, 233);
+        assertEquals(1, ret.size());
+        assertTrue(ret.contains(data.get(7)));
+
+        ret = intIndex.findBetween(5, 6);
+        assertEquals(0, ret.size());
+
+        ret = intIndex.findBetween(2, 2);
+        assertEquals(1, ret.size());
+        assertTrue(ret.contains(data.get(2)));
     }
 
     @Test
     public void testRemove() {
-        // TODO
+        var index = new Index<>(TestEntry::getIntAttr, Function.identity(), Comparator.naturalOrder());
+        index.addIndexFor(new TestEntry(1, "a"));
+        index.addIndexFor(new TestEntry(1, "b"));
+        index.addIndexFor(new TestEntry(2, "c"));
+
+        var ans = index.removeIndexFor(new TestEntry(1, "b"));
+        assertTrue(ans);
+        assertEquals(2, index.size());
+
+        assertTrue(index.has(1));
+        assertTrue(index.has(2));
+
+        assertTrue(index.has(new TestEntry(1, "a")));
+        assertTrue(index.has(new TestEntry(2, "c")));
+        assertFalse(index.has(new TestEntry(1, "b")));
+        assertFalse(index.has(new TestEntry(1, "c")));
+        //
+        ans = index.removeIndexFor(new TestEntry(1, "c"));
+        assertFalse(ans);
+        assertEquals(2, index.size());
+        //
+        ans = index.removeIndexFor(new TestEntry(2, "c"));
+        assertTrue(ans);
+        ans = index.removeIndexFor(new TestEntry(1, "a"));
+        assertTrue(ans);
+        assertEquals(0, index.size());
     }
 }

@@ -129,6 +129,7 @@ public class Index<S extends IEntry, T, I> {
             return result;
         if (rbTree.compareNode(cur, end) > 0) // 即 low > high
             return result;
+        end = rbTree.nextOf(end);
         for (; cur != null && cur != end; cur = rbTree.nextOf(cur)) {
             result.add(cur.getValue());
         }
