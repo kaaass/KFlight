@@ -8,5 +8,8 @@ import lombok.Data;
 @Data
 public class EntryCity implements IEntry {
 
-    private String name;
+    /**
+     * 城市名
+     */
+    final String name;
 }
