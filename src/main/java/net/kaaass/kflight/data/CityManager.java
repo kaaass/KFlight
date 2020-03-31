@@ -1,6 +1,5 @@
 package net.kaaass.kflight.data;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Synchronized;
 import net.kaaass.kflight.data.entry.EntryCity;
@@ -28,12 +27,21 @@ public class CityManager {
     }
 
     /**
-     * 添加项目
+     * 添加 entry
      */
     @Synchronized
     public static void addEntry(EntryCity entryCity) {
         INSTANCE.data.add(entryCity);
         INSTANCE.indexName.addIndexFor(entryCity);
+    }
+
+    /**
+     * 删除 entry
+     */
+    @Synchronized
+    public static void removeEntry(EntryCity entryCity) {
+        INSTANCE.data.remove(entryCity);
+        INSTANCE.indexName.removeIndexFor(entryCity);
     }
 
     /**

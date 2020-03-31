@@ -1,12 +1,11 @@
 package net.kaaass.kflight.data.entry;
 
 import lombok.Data;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
-@Setter
 public class EntryFlight implements IEntry {
 
     /**
@@ -47,65 +46,70 @@ public class EntryFlight implements IEntry {
     /**
      * 航班状态
      */
-    private State state = State.BOOKING;
+    State state = State.BOOKING;
 
     /**
      * 航班号
      */
-    private String flightNo;
+    final String flightNo;
 
     /**
      * 航空公司名称
      */
-    private String airlineName;
+    final String airlineName;
 
     /**
      * 起飞时间
      */
-    private LocalDateTime departureTime;
+    final LocalDateTime departureTime;
 
     /**
      * 降落时间
      */
-    private LocalDateTime landingTime;
+    final LocalDateTime landingTime;
 
     /**
      * 飞行时间
      */
-    private long flightTime;
+    long flightTime;
 
     /**
      * 起飞城市
      */
-    private EntryCity from;
+    final EntryCity from;
 
     /**
      * 目的城市
      */
-    private EntryCity to;
+    final EntryCity to;
 
     /**
      * 经停城市，可能为空
      */
-    private EntryCity middle;
+    EntryCity middle;
 
     /**
      * 经停等待时间，以秒计算
      */
-    private long middleTime;
+    long middleTime;
 
     /**
      * 客舱总数（总可售票数）
      */
-    private int totalCabin;
+    int totalCabin;
 
     /**
      * 剩余票数
      */
-    private int restCabin;
+    int restCabin;
 
     /**
      * 当前票价
      */
-    private float ticketPrice;
+    float ticketPrice;
+
+    /**
+     * 当前有效票
+     */
+    final List<EntryTicketOrder> tickets;
 }
