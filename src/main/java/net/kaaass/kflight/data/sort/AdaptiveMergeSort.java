@@ -66,7 +66,7 @@ public class AdaptiveMergeSort {
      * 自适应归并排序的非递归实现，需要传入临时数组 buf
      * 处理范围：[left, right)
      */
-    public static <S> void sort(S[] arr, int left, int right, Object[] buf, Comparator<S> cmp) {
+    static <S> void sort(S[] arr, int left, int right, Object[] buf, Comparator<S> cmp) {
         if (right - left < 2) // 已经有序
             return;
 
