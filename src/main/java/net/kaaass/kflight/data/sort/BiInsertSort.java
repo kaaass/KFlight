@@ -12,6 +12,9 @@ public class BiInsertSort {
      * 处理范围：[left, right)
      */
     public static <S> void sort(S[] arr, int left, int right, Comparator<S> cmp) {
+        if (right - left < 2) // 已经有序
+            return;
+        
         int cur = left; // 已处理部分的末尾
         right--;
 

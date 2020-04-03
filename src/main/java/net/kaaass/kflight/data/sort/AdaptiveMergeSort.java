@@ -56,23 +56,23 @@ public class AdaptiveMergeSort {
      * 自适应归并排序的非递归实现
      * 处理范围：[left, right)
      */
-    public static <S> void sort(S[] a, int left, int right, Comparator<S> cmp) {
+    public static <S> void sort(S[] arr, int left, int right, Comparator<S> cmp) {
         if (right - left < 2) // 已经有序
             return;
-        sort(a, left, right, new Object[right - left], cmp);
+        sort(arr, left, right, new Object[right - left], cmp);
     }
 
     /**
      * 自适应归并排序的非递归实现，需要传入临时数组 buf
      * 处理范围：[left, right)
      */
-    public static <S> void sort(S[] a, int left, int right, Object[] buf, Comparator<S> cmp) {
+    public static <S> void sort(S[] arr, int left, int right, Object[] buf, Comparator<S> cmp) {
         if (right - left < 2) // 已经有序
             return;
 
         // buf 长度不足
-        if (buf.length < a.length) {
-            sort(a, left, right, cmp);
+        if (buf.length < arr.length) {
+            sort(arr, left, right, cmp);
             return;
         }
 
@@ -95,9 +95,9 @@ public class AdaptiveMergeSort {
 
             // 寻找升序段 head ... mid
             while (head > left) {
-                if (cmp.compare(a[head - 1], a[head]) > 0) {
+                if (cmp.compare(arr[head - 1], arr[head]) > 0) {
                     if (mid - head < 4) // 升序段太短
-                        insertFirst(a, head - 1, mid, cmp); // 从左到右进行插入
+                        insertFirst(arr, head - 1, mid, cmp); // 从左到右进行插入
                     else
                         break;
                 }
@@ -122,7 +122,7 @@ public class AdaptiveMergeSort {
                     // 如果当前升序段比之前段要长，则需要防止出现合并的两端长度差距过大
                     // 因此此时合并 mid ... tail ... nextTail
                     // 根据性质合并之后的新段小于更之前的段，继续循环处理
-                    merge(a, mid, tail, nextTail, buf, cmp);
+                    merge(arr, mid, tail, nextTail, buf, cmp);
 
                     // 弹栈并向后处理
                     tail = nextTail;
@@ -134,7 +134,7 @@ public class AdaptiveMergeSort {
                     break;
 
                 // 如果不符合性质，合并相邻两个升序段
-                merge(a, head, mid, tail, buf, cmp);
+                merge(arr, head, mid, tail, buf, cmp);
 
                 // 遍历前一分段
                 mid = tail;
