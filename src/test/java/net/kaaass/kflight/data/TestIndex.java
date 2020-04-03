@@ -1,20 +1,17 @@
-package net.kaaass.kflight.data.structure.net.kaaass.kflight.data;
+package net.kaaass.kflight.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.kaaass.kflight.data.Index;
 import net.kaaass.kflight.data.entry.IEntry;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
 
 /**
  * 索引的单元测试
