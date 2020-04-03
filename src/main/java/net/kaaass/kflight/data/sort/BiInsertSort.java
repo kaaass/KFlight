@@ -5,13 +5,13 @@ import java.util.Comparator;
 /**
  * 成对插入排序，在快排场景下处理效率更高
  */
-public class InsertSort {
+public class BiInsertSort {
 
     /**
      * 成对插入排序，在快排场景下处理效率更高
      * 处理范围：[left, right)
      */
-    public static <S> void insertSort(S[] arr, int left, int right, Comparator<S> cmp) {
+    public static <S> void sort(S[] arr, int left, int right, Comparator<S> cmp) {
         int cur = left; // 已处理部分的末尾
         right--;
 
