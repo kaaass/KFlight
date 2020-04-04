@@ -6,7 +6,7 @@ import java.util.Stack;
 /**
  * 以 IntroSort 为范本的一种稳定混合排序算法
  * <p>
- * 使用了：成对排序、稳定快速排序、自适应归并排序
+ * 使用了：成对排序、稳定三者取中快速排序、自适应归并排序
  * 由于处理数据存在较多重复数据，因此连续上升段数量有限，自适应归并排序效
  * 果不会太好，因此以快速排序为基础范本，并对快速排序的部分低效情况进行优化
  */
@@ -102,6 +102,77 @@ public class StableHybridSort {
     }
 
     /**
+     * 尾递归优化单层遍历的排序操作，采用稳定三者取中快速排序
+     * <p>
+     * 尾递归优化是效果最为明显的优化。因为尾递归优化真正减少了递归时
+     * 复制的数据量。
+     */
+    private static <S> void sortOnceTri(S[] arr, int left, int right, Object[] buf, int depthLimit, Comparator<S> cmpr) {
+        int lfPivot, rtPivot;
+        while (right - left > INSERT_THRESHOLD) { // 过小部分使用插入排序
+            if (depthLimit <= 0) {
+                // 快排退化时使用自适应归并排序
+                AdaptiveMergeSort.sort(arr, left, right, buf, cmpr);
+                return;
+            }
+            // 正常进行快排
+            {
+                // 处理分段
+                lfPivot = left;
+                rtPivot = right;
+                if (right - left >= 2) {
+                    // 选择 key
+                    int mid = (left >> 1) + (right >> 1);
+                    S aLf = arr[left], key = arr[mid], aRt = arr[right - 1];
+                    boolean cmp1 = cmpr.compare(aLf, key) < 0,
+                            cmp2 = cmpr.compare(key, aRt) < 0;
+                    if (cmp1 ^ cmp2) {
+                        boolean cmp3 = cmpr.compare(aLf, aRt) < 0;
+                        if (cmp2 ^ cmp3)
+                            key = aRt;
+                        else
+                            key = aLf;
+                    }
+                    // 排序
+                    int lfCur = left, midCur, rtCur, cmp;
+                    midCur = rtCur = right - 1;
+                    for (var i = left; i < right; i++) {
+                        cmp = cmpr.compare(arr[i], key);
+                        if (cmp < 0) {
+                            buf[lfCur] = arr[i];
+                            lfCur++;
+                            arr[i] = null; // 作标记
+                        } else if (cmp == 0) {
+                            buf[midCur] = arr[i];
+                            midCur--;
+                            arr[i] = null; // 作标记
+                        }  // else: pass
+                    }
+                    for (var i = right - 1; i >= left; i--) {
+                        if (arr[i] != null) {
+                            if (rtCur != i)
+                                arr[rtCur] = arr[i];
+                            rtCur--;
+                        }
+                    }
+                    // 复制
+                    if (lfCur - left >= 0)
+                        System.arraycopy(buf, left, arr, left, lfCur - left);
+                    for (var i = 0; i < right - 1 - midCur; i++)
+                        arr[lfCur + i] = (S) buf[right - 1 - i];
+                    // 分段
+                    lfPivot = lfCur;
+                    rtPivot = rtCur + 1;
+                }
+            }
+            // 递归操作
+            depthLimit--;
+            sortOnceTri(arr, rtPivot, right, buf, depthLimit, cmpr);
+            right = lfPivot;
+        }
+    }
+
+    /**
      * 计算 lg2
      */
     private static int lg2(int n) {
@@ -115,12 +186,25 @@ public class StableHybridSort {
      * 一种稳定混合排序算法
      * 处理范围：[left, right)
      */
-    public static <S> void sort(S[] arr, int left, int right, Comparator<S> cmp) {
+    public static <S> void sort(S[] arr, int left, int right, Comparator<S> cmpr) {
         if (right - left < 2) // 已经有序
             return;
 
         int len = right - left;
-        sortOnce(arr, left, right, new Object[len], lg2(len) * 2, cmp);
-        BiInsertSort.sort(arr, left, right, cmp);
+        sortOnceTri(arr, left, right, new Object[len], lg2(len) * 2, cmpr);
+        BiInsertSort.sort(arr, left, right, cmpr);
+    }
+
+    /**
+     * 一种稳定混合排序算法，使用正常快排
+     * 处理范围：[left, right)
+     */
+    public static <S> void normalSort(S[] arr, int left, int right, Comparator<S> cmpr) {
+        if (right - left < 2) // 已经有序
+            return;
+
+        int len = right - left;
+        sortOnce(arr, left, right, new Object[len], lg2(len) * 2, cmpr);
+        BiInsertSort.sort(arr, left, right, cmpr);
     }
 }

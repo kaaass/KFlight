@@ -1,5 +1,6 @@
 package net.kaaass.kflight.data.sort;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import java.util.Random;
 /**
  * 排序效率测试
  */
+@Ignore
 public class Benchmark {
 
     public static Integer[] randomInts(int len) {
@@ -90,8 +92,9 @@ public class Benchmark {
     @Test
     public void benchmarkRandom() {
         int BENCHMARK_LEN = 200000;
-        int ROUND = 50;
-        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort"};
+        int ROUND = 30;
+        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort",
+                "StableHybridSort.normal", "Java Arrays.sort"};
 
         var result = new long[ROUND];
 
@@ -120,8 +123,13 @@ public class Benchmark {
             //
             ret = data.clone();
             tick("");
-            Arrays.sort(ret);
+            StableHybridSort.normalSort(ret, 0, ret.length, Integer::compareTo);
             result[4] += tock("");
+            //
+            ret = data.clone();
+            tick("");
+            Arrays.sort(ret);
+            result[5] += tock("");
         }
         // 打印结果
         System.out.println("====== Random ======");
@@ -139,8 +147,9 @@ public class Benchmark {
         int BENCHMARK_LEN = 20000;
         int BENCHMARK_STEP = 2;
         int BENCHMARK_RADIUS = 10;
-        int ROUND = 50;
-        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort", "BiInsertSort"};
+        int ROUND = 30;
+        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort",
+                "StableHybridSort.normal", "Java Arrays.sort", "BiInsertSort"};
 
         var result = new long[NAMES.length];
 
@@ -169,13 +178,18 @@ public class Benchmark {
             //
             ret = data.clone();
             tick("");
-            Arrays.sort(ret);
+            StableHybridSort.normalSort(ret, 0, ret.length, Integer::compareTo);
             result[4] += tock("");
             //
             ret = data.clone();
             tick("");
-            BiInsertSort.sort(ret, 0, ret.length, Integer::compareTo);
+            Arrays.sort(ret);
             result[5] += tock("");
+            //
+            ret = data.clone();
+            tick("");
+            BiInsertSort.sort(ret, 0, ret.length, Integer::compareTo);
+            result[6] += tock("");
         }
         // 打印结果
         System.out.println("====== NearlySorted ======");
@@ -191,9 +205,10 @@ public class Benchmark {
     @Test
     public void benchmarkMostSame() {
         int BENCHMARK_LEN = 100000;
-        int BENCHMARK_SAME = 100;
-        int ROUND = 50;
-        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort"};
+        int BENCHMARK_SAME = 1000;
+        int ROUND = 30;
+        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort",
+                "StableHybridSort.normal", "Java Arrays.sort"};
 
         var result = new long[ROUND];
 
@@ -222,8 +237,13 @@ public class Benchmark {
             //
             ret = data.clone();
             tick("");
-            Arrays.sort(ret);
+            StableHybridSort.normalSort(ret, 0, ret.length, Integer::compareTo);
             result[4] += tock("");
+            //
+            ret = data.clone();
+            tick("");
+            Arrays.sort(ret);
+            result[5] += tock("");
         }
         // 打印结果
         System.out.println("====== MostSame ======");
@@ -261,6 +281,11 @@ public class Benchmark {
         tick("");
         StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
         tock("StableHybridSort:");
+        //
+        ret = data.clone();
+        tick("");
+        StableHybridSort.normalSort(ret, 0, ret.length, Integer::compareTo);
+        tock("StableHybridSort.normal:");
         //
         ret = data.clone();
         tick("");

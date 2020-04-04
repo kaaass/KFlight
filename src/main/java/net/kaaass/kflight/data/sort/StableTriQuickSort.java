@@ -7,13 +7,8 @@ import java.util.Comparator;
  */
 public class StableTriQuickSort {
 
-    public final static class Pivot {
-        int left;
-        int right;
-    }
-
     /**
-     * 尾递归优化的稳定快速排序
+     * 尾递归优化的稳定三者取中快速排序
      * 处理范围：[left, right)
      */
     public static <S> void sort(S[] arr, int left, int right, Comparator<S> cmp) {
@@ -23,7 +18,7 @@ public class StableTriQuickSort {
     }
 
     /**
-     * 尾递归优化的稳定快速排序，需要传入临时数组 buf
+     * 尾递归优化的稳定三者取中快速排序，需要传入临时数组 buf
      * 处理范围：[left, right)
      */
     static <S> void sort(S[] arr, int left, int right, Object[] buf, Comparator<S> cmpr) {
