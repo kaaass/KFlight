@@ -3,7 +3,9 @@ package net.kaaass.kflight.data.sort;
 import java.util.Comparator;
 
 /**
- * 稳定化快速排序，加入了三者取中优化，并返回两个 pivot
+ * 稳定化快速排序，加入了三者取中、双枢轴优化
+ *
+ * 优化思路参考 {@see #sort}
  */
 public class StableTriQuickSort {
 
@@ -31,7 +33,25 @@ public class StableTriQuickSort {
             lfPivot = left;
             rtPivot = right;
             if (right - left >= 2) {
-                // 选择 key
+                /*
+                 * 选择 Key 算法的推导如下，假设三个数 a, b, c，首先计算：
+                 *   c1 = a < b
+                 *   c2 = b < c
+                 *   c3 = a < c
+                 * 之后，可以列出下标：
+                 *   ret | c1 | c2 | c3
+                 *    b  | 0  | 0  | 0
+                 *    _  | 0  | 0  | 1
+                 *    c  | 0  | 1  | 0
+                 *    a  | 0  | 1  | 1
+                 *    a  | 1  | 0  | 0
+                 *    c  | 1  | 0  | 1
+                 *    _  | 1  | 1  | 0
+                 *    b  | 1  | 1  | 1
+                 * 观察表格，可以发现表格上下对称，因此可以用异或进行判断。
+                 * 由于 compare 的代价较高，并且一般情况下数据有一定顺序，
+                 * 因此优先选择位置靠中的 b，若非 b 再计算 c3。
+                 */
                 int mid = (left >> 1) + (right >> 1);
                 S aLf = arr[left], key = arr[mid], aRt = arr[right - 1];
                 boolean cmp1 = cmpr.compare(aLf, key) < 0,
@@ -43,7 +63,16 @@ public class StableTriQuickSort {
                     else
                         key = aLf;
                 }
-                // 排序
+                /*
+                 * 排序采用了双枢轴优化。不过此处的优化与 DualPivot 不同，
+                 * 两个枢轴之间仅仅存放与 key 相同的数据。由于为了维持排序
+                 * 稳定使用了额外空间 buf，因此可以利用该空间减少赋值操作。
+                 * 为了减少比较次数，采用了在 buf 不同位置存放，并且使用
+                 * null 做标记。
+                 *
+                 * left         lfPivot         rtPivot        right
+                 * | ... < key ... | ... = key ... | ... > key ... |
+                 */
                 int lfCur = left, midCur, rtCur, cmp;
                 midCur = rtCur = right - 1;
                 for (var i = left; i < right; i++) {

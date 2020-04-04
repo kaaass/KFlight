@@ -37,7 +37,7 @@ public class StableHybridSort {
     /**
      * 去递归单层遍历的排序操作
      * <p>
-     * 和递归操作 {@see sortOnceRecursive} 速度几乎一致，究其因
+     * 和递归操作 {@see #sortOnceRecursive} 速度几乎一致，究其因
      * 可能是 JVM 本身基于堆栈，递归时数据分配代价接近，并且编译时
      * 递归版本还可能会被自动展开进行优化
      *
@@ -104,8 +104,7 @@ public class StableHybridSort {
     /**
      * 尾递归优化单层遍历的排序操作，采用稳定三者取中快速排序
      * <p>
-     * 尾递归优化是效果最为明显的优化。因为尾递归优化真正减少了递归时
-     * 复制的数据量。
+     * 优化思路参考 {@see StableTriQuickSort}
      */
     private static <S> void sortOnceTri(S[] arr, int left, int right, Object[] buf, int depthLimit, Comparator<S> cmpr) {
         int lfPivot, rtPivot;
