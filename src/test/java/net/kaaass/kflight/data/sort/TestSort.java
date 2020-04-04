@@ -1,6 +1,6 @@
 package net.kaaass.kflight.data.sort;
 
-import org.junit.Ignore;
+import net.kaaass.kflight.data.Sorter;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -26,14 +26,7 @@ public class TestSort {
         return ret;
     }
 
-    public static Integer[] revInts(int len) {
-        var ret = new Integer[len];
-        for (int i = 0; i < len; i++)
-            ret[i] = len - i - 1;
-        return ret;
-    }
-
-    public void assertSort(Integer[] data, Integer[] ret) {
+    public void assertSort(Object[] data, Object[] ret) {
         Arrays.sort(data);
         assertArrayEquals(data, ret);
     }
@@ -43,14 +36,14 @@ public class TestSort {
     public static void tick(String info) {
         if (info.length() > 0)
             System.out.println(info);
-        ts = System.currentTimeMillis();
+        ts = System.nanoTime();
     }
 
     public static long tock(String info) {
-        long diff = System.currentTimeMillis() - ts;
+        long diff = System.nanoTime() - ts;
         if (info.length() > 0) {
             System.out.print(info);
-            System.out.printf(" Done in %d ms.\n", diff);
+            System.out.printf(" Done in %f ms.\n", diff * 1e-6d);
         }
         return diff;
     }
@@ -101,70 +94,14 @@ public class TestSort {
         assertSort(data, ret);
     }
 
-    /*
-     Benchmark
-     */
-
-    /**
-     * 测试随机顺序
-     */
-    @Test()
-    public void benchmarkRandom() {
-        int BENCHMARK_LEN = 3000000;
-
-        var data = randomInts(BENCHMARK_LEN);
-        //
+    @Test
+    public void testSorter() {
+        var data = randomInts(TEST_LEN);
         var ret = data.clone();
-        tick("");
-        StableQuickSort.sort(ret, 0, ret.length, Integer::compareTo);
-        tock("Random StableQuickSort:");
-        //
-        ret = data.clone();
-        tick("");
-        AdaptiveMergeSort.sort(ret, 0, ret.length, Integer::compareTo);
-        tock("Random AdaptiveMergeSort:");
-        //
-        ret = data.clone();
-        tick("");
-        StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
-        tock("Random StableHybridSort:");
-        //
-        ret = data.clone();
-        tick("");
-        Arrays.sort(ret);
-        tock("Random Java Arrays.sort:");
-        //
-        System.out.println("");
-    }
-
-    /**
-     * 测试逆顺序
-     */
-    @Test()
-    public void benchmarkReverse() {
-        int BENCHMARK_LEN = 50000;
-        var data = revInts(BENCHMARK_LEN);
-        //
-        var ret = data.clone();
-        tick("");
-        StableQuickSort.sort(ret, 0, ret.length, Integer::compareTo);
-        tock("Reverse StableQuickSort:");
-        //
-        ret = data.clone();
-        tick("");
-        AdaptiveMergeSort.sort(ret, 0, ret.length, Integer::compareTo);
-        tock("Reverse AdaptiveMergeSort:");
-        //
-        ret = data.clone();
-        tick("");
-        StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
-        tock("Reverse StableHybridSort:");
-        //
-        ret = data.clone();
-        tick("");
-        Arrays.sort(ret);
-        tock("Reverse Java Arrays.sort:");
-        //
-        System.out.println("");
+        var list = Arrays.asList(ret);
+        tick("Start test Sorter.");
+        Sorter.sort(list, Integer::compareTo);
+        tock("End test Sorter.");
+        assertSort(data, list.toArray());
     }
 }

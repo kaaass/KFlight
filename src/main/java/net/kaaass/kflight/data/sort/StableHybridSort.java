@@ -1,14 +1,14 @@
 package net.kaaass.kflight.data.sort;
 
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Stack;
 
 /**
  * 以 IntroSort 为范本的一种稳定混合排序算法
  * <p>
  * 使用了：成对排序、稳定快速排序、自适应归并排序
+ * 由于处理数据存在较多重复数据，因此连续上升段数量有限，自适应归并排序效
+ * 果不会太好，因此以快速排序为基础范本，并对快速排序的部分低效情况进行优化
  */
 public class StableHybridSort {
 
@@ -16,7 +16,10 @@ public class StableHybridSort {
 
     /**
      * 递归式单层遍历的排序操作
+     *
+     * @deprecated
      */
+    @Deprecated
     private static <S> void sortOnceRecursive(S[] arr, int left, int right, Object[] buf, int depthLimit, Comparator<S> cmp) {
         if (right - left > INSERT_THRESHOLD) { // 过小部分使用插入排序
             if (depthLimit <= 0) {
@@ -33,7 +36,14 @@ public class StableHybridSort {
 
     /**
      * 去递归单层遍历的排序操作
+     * <p>
+     * 和递归操作 {@see sortOnceRecursive} 速度几乎一致，究其因
+     * 可能是 JVM 本身基于堆栈，递归时数据分配代价接近，并且编译时
+     * 递归版本还可能会被自动展开进行优化
+     *
+     * @deprecated
      */
+    @Deprecated
     private static <S> void sortOnceDeRecursive(S[] arr, int left, int right, Object[] buf, int depthLimit, Comparator<S> cmp) {
         if (right - left <= INSERT_THRESHOLD) return;
 
@@ -72,6 +82,9 @@ public class StableHybridSort {
 
     /**
      * 尾递归优化单层遍历的排序操作
+     * <p>
+     * 尾递归优化是效果最为明显的优化。因为尾递归优化真正减少了递归时
+     * 复制的数据量。
      */
     private static <S> void sortOnce(S[] arr, int left, int right, Object[] buf, int depthLimit, Comparator<S> cmp) {
         while (right - left > INSERT_THRESHOLD) { // 过小部分使用插入排序
