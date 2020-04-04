@@ -75,6 +75,16 @@ public class TestSort {
     }
 
     @Test
+    public void testStableTriQuickSort() {
+        var data = randomInts(TEST_LEN);
+        var ret = data.clone();
+        tick("Start test StableTriQuickSort.");
+        StableTriQuickSort.sort(ret, 0, ret.length, Integer::compareTo);
+        tock("End test StableTriQuickSort.");
+        assertSort(data, ret);
+    }
+
+    @Test
     public void testAdaptiveMergeSort() {
         var data = randomInts(TEST_LEN);
         var ret = data.clone();
