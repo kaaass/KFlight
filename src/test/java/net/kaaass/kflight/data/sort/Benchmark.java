@@ -91,7 +91,7 @@ public class Benchmark {
     public void benchmarkRandom() {
         int BENCHMARK_LEN = 200000;
         int ROUND = 50;
-        var NAMES = new String[]{"StableQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort"};
+        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort"};
 
         var result = new long[ROUND];
 
@@ -105,18 +105,23 @@ public class Benchmark {
             //
             ret = data.clone();
             tick("");
-            AdaptiveMergeSort.sort(ret, 0, ret.length, Integer::compareTo);
+            StableTriQuickSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[1] += tock("");
             //
             ret = data.clone();
             tick("");
-            StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
+            AdaptiveMergeSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[2] += tock("");
             //
             ret = data.clone();
             tick("");
-            Arrays.sort(ret);
+            StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[3] += tock("");
+            //
+            ret = data.clone();
+            tick("");
+            Arrays.sort(ret);
+            result[4] += tock("");
         }
         // 打印结果
         System.out.println("====== Random ======");
@@ -135,7 +140,7 @@ public class Benchmark {
         int BENCHMARK_STEP = 2;
         int BENCHMARK_RADIUS = 10;
         int ROUND = 50;
-        var NAMES = new String[]{"StableQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort", "BiInsertSort"};
+        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort", "BiInsertSort"};
 
         var result = new long[NAMES.length];
 
@@ -149,23 +154,28 @@ public class Benchmark {
             //
             ret = data.clone();
             tick("");
-            AdaptiveMergeSort.sort(ret, 0, ret.length, Integer::compareTo);
+            StableTriQuickSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[1] += tock("");
             //
             ret = data.clone();
             tick("");
-            StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
+            AdaptiveMergeSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[2] += tock("");
             //
             ret = data.clone();
             tick("");
-            Arrays.sort(ret);
+            StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[3] += tock("");
             //
             ret = data.clone();
             tick("");
-            BiInsertSort.sort(ret, 0, ret.length, Integer::compareTo);
+            Arrays.sort(ret);
             result[4] += tock("");
+            //
+            ret = data.clone();
+            tick("");
+            BiInsertSort.sort(ret, 0, ret.length, Integer::compareTo);
+            result[5] += tock("");
         }
         // 打印结果
         System.out.println("====== NearlySorted ======");
@@ -183,7 +193,7 @@ public class Benchmark {
         int BENCHMARK_LEN = 100000;
         int BENCHMARK_SAME = 100;
         int ROUND = 50;
-        var NAMES = new String[]{"StableQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort"};
+        var NAMES = new String[]{"StableQuickSort", "StableTriQuickSort", "AdaptiveMergeSort", "StableHybridSort", "Java Arrays.sort"};
 
         var result = new long[ROUND];
 
@@ -197,18 +207,23 @@ public class Benchmark {
             //
             ret = data.clone();
             tick("");
-            AdaptiveMergeSort.sort(ret, 0, ret.length, Integer::compareTo);
+            StableTriQuickSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[1] += tock("");
             //
             ret = data.clone();
             tick("");
-            StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
+            AdaptiveMergeSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[2] += tock("");
             //
             ret = data.clone();
             tick("");
-            Arrays.sort(ret);
+            StableHybridSort.sort(ret, 0, ret.length, Integer::compareTo);
             result[3] += tock("");
+            //
+            ret = data.clone();
+            tick("");
+            Arrays.sort(ret);
+            result[4] += tock("");
         }
         // 打印结果
         System.out.println("====== MostSame ======");
@@ -231,6 +246,11 @@ public class Benchmark {
         tick("");
         StableQuickSort.sort(ret, 0, ret.length, Integer::compareTo);
         tock("StableQuickSort:");
+        //
+        ret = data.clone();
+        tick("");
+        StableTriQuickSort.sort(ret, 0, ret.length, Integer::compareTo);
+        tock("StableTriQuickSort:");
         //
         ret = data.clone();
         tick("");
