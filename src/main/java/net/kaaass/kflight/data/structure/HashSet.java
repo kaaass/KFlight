@@ -53,7 +53,7 @@ public class HashSet<S> {
     }
 
     /**
-     * 将集合中全部元素存储于列表
+     * 将集合中全部元素以哈希升序存储于列表
      */
     public List<S> toList() {
         var ret = new ArrayList<S>();
