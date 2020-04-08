@@ -1,16 +1,19 @@
 package net.kaaass.kflight.data;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Synchronized;
 import net.kaaass.kflight.data.entry.EntryCity;
 import net.kaaass.kflight.data.entry.EntryFlight;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * 航班数据管理
@@ -52,16 +55,49 @@ public class FlightManager {
     private Index<EntryFlight, LocalDateTime, Long> indexLandingTime;
 
     /**
+     * 城市时间索引
+     */
+    @Data
+    public static final class CityTimeIndex {
+        final String cityName;
+        final LocalDateTime time;
+
+        Hash toHash() {
+            return new Hash(cityName.hashCode(), time.toEpochSecond(ZoneOffset.UTC));
+        }
+
+        /**
+         * 索引哈希
+         */
+        @Data
+        public static final class Hash implements Comparable<Hash> {
+            final int nameHash;
+            final Long dateTime;
+
+            @Override
+            public int compareTo(Hash o) {
+                if (o == null)
+                    throw new NullPointerException();
+                int cmp = Integer.compare(nameHash, o.nameHash);
+                if (cmp != 0) {
+                    cmp = Long.compare(dateTime, o.dateTime);
+                }
+                return cmp;
+            }
+        }
+    }
+
+    /**
      * 起飞地索引
      */
     @Getter
-    private Index<EntryFlight, String, Integer> indexFrom;
+    private Index<EntryFlight, CityTimeIndex, CityTimeIndex.Hash> indexFromTime;
 
     /**
      * 降落地索引
      */
     @Getter
-    private Index<EntryFlight, String, Integer> indexTo;
+    private Index<EntryFlight, CityTimeIndex, CityTimeIndex.Hash> indexToTime;
 
     /**
      * 起降地索引
@@ -76,8 +112,11 @@ public class FlightManager {
         indexAirlineName = new Index<>(EntryFlight::getAirlineName, String::hashCode, Comparator.naturalOrder());
         indexDepartureTime = new Index<>(EntryFlight::getDepartureTime, time -> time.toEpochSecond(ZoneOffset.UTC), Comparator.<Long>naturalOrder());
         indexLandingTime = new Index<>(EntryFlight::getLandingTime, time -> time.toEpochSecond(ZoneOffset.UTC), Comparator.<Long>naturalOrder());
-        indexFrom = new Index<>(flight -> flight.getFrom().getName(), String::hashCode, Comparator.naturalOrder());
-        indexTo = new Index<>(flight -> flight.getTo().getName(), String::hashCode, Comparator.naturalOrder());
+        // 城市&起飞时间索引
+        indexFromTime = new Index<>(flight -> new CityTimeIndex(flight.getFrom().getName(), flight.getDepartureTime()),
+                CityTimeIndex::toHash, Comparator.naturalOrder());
+        indexToTime = new Index<>(flight -> new CityTimeIndex(flight.getTo().getName(), flight.getDepartureTime()),
+                CityTimeIndex::toHash, Comparator.naturalOrder());
         indexFromTo = new Index<>(flight -> flight.getFrom().getName() + SEPARATOR
                 + flight.getTo().getName(), String::hashCode, Comparator.naturalOrder());
     }
@@ -92,8 +131,8 @@ public class FlightManager {
         INSTANCE.indexAirlineName.addIndexFor(entryFlight);
         INSTANCE.indexDepartureTime.addIndexFor(entryFlight);
         INSTANCE.indexLandingTime.addIndexFor(entryFlight);
-        INSTANCE.indexFrom.addIndexFor(entryFlight);
-        INSTANCE.indexTo.addIndexFor(entryFlight);
+        INSTANCE.indexFromTime.addIndexFor(entryFlight);
+        INSTANCE.indexToTime.addIndexFor(entryFlight);
         INSTANCE.indexFromTo.addIndexFor(entryFlight);
         // 计算城市平均票价
         var from = entryFlight.getFrom();
@@ -116,8 +155,8 @@ public class FlightManager {
         INSTANCE.indexAirlineName.removeIndexFor(entryFlight);
         INSTANCE.indexDepartureTime.removeIndexFor(entryFlight);
         INSTANCE.indexLandingTime.removeIndexFor(entryFlight);
-        INSTANCE.indexFrom.removeIndexFor(entryFlight);
-        INSTANCE.indexTo.removeIndexFor(entryFlight);
+        INSTANCE.indexFromTime.removeIndexFor(entryFlight);
+        INSTANCE.indexToTime.removeIndexFor(entryFlight);
         INSTANCE.indexFromTo.removeIndexFor(entryFlight);
     }
 
@@ -140,6 +179,24 @@ public class FlightManager {
      */
     public static List<EntryFlight> findBetween(LocalDateTime start, LocalDateTime end) {
         return INSTANCE.indexDepartureTime.findBetween(start, end);
+    }
+
+    /**
+     * 查找起飞地点确定、起飞时间在某日期的航班
+     */
+    public static List<EntryFlight> findByFromAndDate(EntryCity city, LocalDate date) {
+        var start = new CityTimeIndex(city.getName(), date.atStartOfDay());
+        var end = new CityTimeIndex(city.getName(), date.plusDays(1).atStartOfDay());
+        return INSTANCE.indexFromTime.findBetween(start, end);
+    }
+
+    /**
+     * 查找着陆地点确定、起飞时间在某日期的航班
+     */
+    public static List<EntryFlight> findByToAndDate(EntryCity city, LocalDate date) {
+        var start = new CityTimeIndex(city.getName(), date.atStartOfDay());
+        var end = new CityTimeIndex(city.getName(), date.plusDays(1).atStartOfDay());
+        return INSTANCE.indexToTime.findBetween(start, end);
     }
 
     public static FlightManager getInstance() {
