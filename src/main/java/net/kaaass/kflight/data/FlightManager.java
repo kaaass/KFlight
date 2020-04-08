@@ -95,6 +95,15 @@ public class FlightManager {
         INSTANCE.indexFrom.addIndexFor(entryFlight);
         INSTANCE.indexTo.addIndexFor(entryFlight);
         INSTANCE.indexFromTo.addIndexFor(entryFlight);
+        // 计算城市平均票价
+        var from = entryFlight.getFrom();
+        var avg = from.getAvgCnt();
+        var price = from.getAvgPrice();
+        from.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / avg);
+        var to = entryFlight.getTo();
+        avg = to.getAvgCnt();
+        price = to.getAvgPrice();
+        to.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / avg);
     }
 
     /**
