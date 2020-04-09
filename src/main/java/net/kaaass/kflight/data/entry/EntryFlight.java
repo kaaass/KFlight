@@ -2,14 +2,20 @@ package net.kaaass.kflight.data.entry;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Data;
+import lombok.*;
+import net.kaaass.kflight.util.LocalDateTimeDeserializer;
+import net.kaaass.kflight.util.LocalDateTimeSerializer;
 import net.kaaass.kflight.util.EntryCityDeserializer;
 import net.kaaass.kflight.util.EntryCitySerializer;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class EntryFlight implements IEntry {
 
     /**
@@ -55,41 +61,48 @@ public class EntryFlight implements IEntry {
     /**
      * 航班号
      */
-    final String flightNo;
+    String flightNo;
 
     /**
      * 航空公司名称
      */
-    final String airlineName;
+    String airlineName;
 
     /**
      * 起飞时间
      */
-    final LocalDateTime departureTime;
+    @Setter
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    LocalDateTime departureTime;
 
     /**
      * 降落时间
      */
-    final LocalDateTime landingTime;
+    @Setter
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    LocalDateTime landingTime;
 
     /**
      * 飞行时间
      */
-    long flightTime;
+    @Setter
+    long flightTime = 0;
 
     /**
      * 起飞城市
      */
     @JsonSerialize(using = EntryCitySerializer.class)
     @JsonDeserialize(using = EntryCityDeserializer.class)
-    final EntryCity from;
+    EntryCity from;
 
     /**
      * 目的城市
      */
     @JsonSerialize(using = EntryCitySerializer.class)
     @JsonDeserialize(using = EntryCityDeserializer.class)
-    final EntryCity to;
+    EntryCity to;
 
     /**
      * 经停城市，可能为空
@@ -101,25 +114,29 @@ public class EntryFlight implements IEntry {
     /**
      * 经停等待时间，以秒计算
      */
+    @Setter
     long middleTime;
 
     /**
      * 客舱总数（总可售票数）
      */
+    @Setter
     int totalCabin;
 
     /**
      * 剩余票数
      */
+    @Setter
     int restCabin;
 
     /**
      * 当前票价
      */
+    @Setter
     float ticketPrice;
 
     /**
      * 当前有效票
      */
-    final List<EntryTicketOrder> tickets;
+    List<EntryTicketOrder> tickets;
 }

@@ -6,6 +6,7 @@ import lombok.Synchronized;
 import net.kaaass.kflight.data.entry.EntryCity;
 import net.kaaass.kflight.data.entry.EntryFlight;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -126,6 +127,10 @@ public class FlightManager {
      */
     @Synchronized
     public static void addEntry(EntryFlight entryFlight) {
+        // 字段计算
+        entryFlight.setFlightTime(Duration.between(
+                entryFlight.getDepartureTime(), entryFlight.getLandingTime()).toSeconds());
+        // 添加对象
         INSTANCE.data.add(entryFlight);
         INSTANCE.indexFlightNo.addIndexFor(entryFlight);
         INSTANCE.indexAirlineName.addIndexFor(entryFlight);
@@ -138,11 +143,13 @@ public class FlightManager {
         var from = entryFlight.getFrom();
         var avg = from.getAvgCnt();
         var price = from.getAvgPrice();
-        from.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / avg);
+        from.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / (avg + 1));
+        from.setAvgCnt(avg + 1);
         var to = entryFlight.getTo();
         avg = to.getAvgCnt();
         price = to.getAvgPrice();
-        to.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / avg);
+        to.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / (avg + 1));
+        to.setAvgCnt(avg + 1);
     }
 
     /**
