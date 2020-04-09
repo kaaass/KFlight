@@ -1,6 +1,10 @@
 package net.kaaass.kflight.data.entry;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import net.kaaass.kflight.util.EntryCityDeserializer;
+import net.kaaass.kflight.util.EntryCitySerializer;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -76,16 +80,22 @@ public class EntryFlight implements IEntry {
     /**
      * 起飞城市
      */
+    @JsonSerialize(using = EntryCitySerializer.class)
+    @JsonDeserialize(using = EntryCityDeserializer.class)
     final EntryCity from;
 
     /**
      * 目的城市
      */
+    @JsonSerialize(using = EntryCitySerializer.class)
+    @JsonDeserialize(using = EntryCityDeserializer.class)
     final EntryCity to;
 
     /**
      * 经停城市，可能为空
      */
+    @JsonSerialize(using = EntryCitySerializer.class)
+    @JsonDeserialize(using = EntryCityDeserializer.class)
     EntryCity middle;
 
     /**

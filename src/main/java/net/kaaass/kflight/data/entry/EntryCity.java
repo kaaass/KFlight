@@ -1,9 +1,7 @@
 package net.kaaass.kflight.data.entry;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 /**
  * 城市数据
@@ -11,19 +9,23 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode(exclude = {"avgPrice"})
+@RequiredArgsConstructor
 public class EntryCity implements IEntry {
 
     /**
      * 城市名
      */
-    final String name = null;
+    @NonNull
+    final String name;
 
     /**
      * 平均票价
      */
     @Setter
+    @JsonIgnore
     float avgPrice = 0;
 
     @Setter
+    @JsonIgnore
     int avgCnt = 0;
 }

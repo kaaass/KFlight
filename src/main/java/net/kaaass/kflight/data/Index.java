@@ -86,6 +86,8 @@ public class Index<S extends IEntry, T, I> {
      * @return 若不存在，返回 null
      */
     public S findOneRaw(T ind) {
+        if (ind == null)
+            return null;
         var node = rbTree.findOne(indexOf(ind));
         if (node == null)
             return null;
