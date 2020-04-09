@@ -1,4 +1,4 @@
-package net.kaaass.kflight.data.sort;
+package net.kaaass.kflight.data.algorithm.sort;
 
 import org.junit.Ignore;
 import org.junit.Test;
