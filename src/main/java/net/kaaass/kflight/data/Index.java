@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -159,5 +160,26 @@ public class Index<S extends IEntry, T, I> {
      */
     public void clear() {
         rbTree.clear();
+    }
+
+    /**
+     * 节点遍历
+     */
+    private void forEachNode(Consumer<RBTree.TreeNode<I, S>> consumer) {
+        var cur = rbTree.getMinimumNode();
+        if (cur != null) {
+            for (; cur != null; cur = rbTree.nextOf(cur)) {
+                consumer.accept(cur);
+            }
+        }
+    }
+
+    /**
+     * 将索引中全部元素以哈希升序存储于列表，键为哈希
+     */
+    List<RBTree.TreeNode<I, S>> toNodeList() {
+        var ret = new ArrayList<RBTree.TreeNode<I, S>>();
+        forEachNode(ret::add);
+        return ret;
     }
 }

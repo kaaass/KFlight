@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 航班数据管理
@@ -80,7 +80,7 @@ public class FlightManager {
                 if (o == null)
                     throw new NullPointerException();
                 int cmp = Integer.compare(nameHash, o.nameHash);
-                if (cmp != 0) {
+                if (cmp == 0) {
                     cmp = Long.compare(dateTime, o.dateTime);
                 }
                 return cmp;
@@ -115,9 +115,9 @@ public class FlightManager {
         indexLandingTime = new Index<>(EntryFlight::getLandingTime, time -> time.toEpochSecond(ZoneOffset.UTC), Comparator.<Long>naturalOrder());
         // 城市&起飞时间索引
         indexFromTime = new Index<>(flight -> new CityTimeIndex(flight.getFrom().getName(), flight.getDepartureTime()),
-                CityTimeIndex::toHash, Comparator.naturalOrder());
+                CityTimeIndex::toHash, CityTimeIndex.Hash::compareTo);
         indexToTime = new Index<>(flight -> new CityTimeIndex(flight.getTo().getName(), flight.getDepartureTime()),
-                CityTimeIndex::toHash, Comparator.naturalOrder());
+                CityTimeIndex::toHash, CityTimeIndex.Hash::compareTo);
         indexFromTo = new Index<>(flight -> flight.getFrom().getName() + SEPARATOR
                 + flight.getTo().getName(), String::hashCode, Comparator.naturalOrder());
     }
@@ -178,7 +178,11 @@ public class FlightManager {
      * 根据起降地寻找航班
      */
     public static List<EntryFlight> findAllByFromTo(EntryCity from, EntryCity to) {
-        return INSTANCE.indexFromTo.findAll(from.getName() + SEPARATOR + to.getName());
+        return INSTANCE.indexFromTo
+                .findAll(from.getName() + SEPARATOR + to.getName())
+                .parallelStream()
+                .filter(flight -> flight.getFrom().equals(from) && flight.getTo().equals(to))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -194,7 +198,11 @@ public class FlightManager {
     public static List<EntryFlight> findByFromAndDate(EntryCity city, LocalDate date) {
         var start = new CityTimeIndex(city.getName(), date.atStartOfDay());
         var end = new CityTimeIndex(city.getName(), date.plusDays(1).atStartOfDay());
-        return INSTANCE.indexFromTime.findBetween(start, end);
+        return INSTANCE.indexFromTime
+                .findBetween(start, end)
+                .parallelStream()
+                .filter(flight -> flight.getFrom().equals(city))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -203,7 +211,11 @@ public class FlightManager {
     public static List<EntryFlight> findByToAndDate(EntryCity city, LocalDate date) {
         var start = new CityTimeIndex(city.getName(), date.atStartOfDay());
         var end = new CityTimeIndex(city.getName(), date.plusDays(1).atStartOfDay());
-        return INSTANCE.indexToTime.findBetween(start, end);
+        return INSTANCE.indexToTime
+                .findBetween(start, end)
+                .parallelStream()
+                .filter(flight -> flight.getTo().equals(city))
+                .collect(Collectors.toList());
     }
 
     /**
