@@ -51,6 +51,14 @@ public class CityManager {
         return INSTANCE.indexName.findOne(name);
     }
 
+    /**
+     * 清空城市数据
+     */
+    public static void clear() {
+        INSTANCE.data.clear();
+        INSTANCE.indexName.clear();
+    }
+
     public static CityManager getInstance() {
         return INSTANCE;
     }

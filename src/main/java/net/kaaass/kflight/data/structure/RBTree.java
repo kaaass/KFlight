@@ -604,4 +604,11 @@ public class RBTree<K, V> {
         }
         return false;
     }
+
+    /**
+     * 清空树内容
+     */
+    public void clear() {
+        root = null;
+    }
 }

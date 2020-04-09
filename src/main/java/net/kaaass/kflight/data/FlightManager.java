@@ -199,6 +199,20 @@ public class FlightManager {
         return INSTANCE.indexToTime.findBetween(start, end);
     }
 
+    /**
+     * 清空航班数据
+     */
+    public static void clear() {
+        INSTANCE.data.clear();
+        INSTANCE.indexFlightNo.clear();
+        INSTANCE.indexAirlineName.clear();
+        INSTANCE.indexDepartureTime.clear();
+        INSTANCE.indexLandingTime.clear();
+        INSTANCE.indexFromTime.clear();
+        INSTANCE.indexToTime.clear();
+        INSTANCE.indexFromTo.clear();
+    }
+
     public static FlightManager getInstance() {
         return INSTANCE;
     }

@@ -151,4 +151,11 @@ public class Index<S extends IEntry, T, I> {
         var index = indexOf(ind);
         return rbTree.has(index);
     }
+
+    /**
+     * 清空索引内容
+     */
+    public void clear() {
+        rbTree.clear();
+    }
 }
