@@ -1,6 +1,6 @@
 package net.kaaass.kflight.data;
 
-import net.kaaass.kflight.data.sort.StableHybridSort;
+import net.kaaass.kflight.data.algorithm.sort.StableHybridSort;
 
 import java.util.Comparator;
 import java.util.List;

@@ -68,4 +68,28 @@ public class TestHashSet {
 
         assertEquals(list, set.toList());
     }
+
+    @Test
+    public void testEqual() {
+        var setA = new HashSet<String>(){{
+            insert("test");
+            insert("aaa");
+            insert("23333");
+        }};
+        var setB = new HashSet<String>(){{
+            insert("bbb");
+            insert("23333");
+            insert("test");
+            insert("66666");
+        }};
+        var setC = new HashSet<String>(){{
+            insert("23333");
+            insert("test");
+            insert("aaa");
+        }};
+
+        assertNotEquals(setA, setB);
+        assertNotEquals(setB, setC);
+        assertEquals(setA, setC);
+    }
 }
