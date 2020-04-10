@@ -40,6 +40,12 @@ public class Planner {
     public static List<FlightPlan> plan(EntryCity from, EntryCity to, LocalDate date) {
         int limit = DEFAULT_SEARCH_LIMIT;
         var result = new ArrayList<FlightPlan>();
+        // 直达查找
+        FlightManager.findAllByFromToAndDate(from, to, date)
+                .parallelStream()
+                .map(Planner::planFor)
+                .forEach(result::add);
+        // 转机查找
         limit = searchGapOne(result, from, to, date, limit);
         searchGapMulti(result, from, to, date, limit);
         planSort(result);
@@ -227,6 +233,16 @@ public class Planner {
             }
             return cmp;
         });
+    }
+
+    /**
+     * 为单航班创建转机计划
+     */
+    private static FlightPlan planFor(EntryFlight flight) {
+        return new FlightPlan(flight.getTicketPrice(), flight.getFlightTime(),
+                new ArrayList<>() {{
+                    add(flight);
+                }});
     }
 
     /**
