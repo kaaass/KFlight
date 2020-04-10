@@ -3,6 +3,10 @@ server:
   servlet:
     context-path: /
 
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
 logging:
   level:
     org.springframework:

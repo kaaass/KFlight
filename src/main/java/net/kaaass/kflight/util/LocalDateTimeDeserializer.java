@@ -8,11 +8,15 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeDeserializer extends JsonDeserializer<LocalDateTime> {
+
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     @Override
     public LocalDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
-        long ts = jsonParser.getValueAsLong();
-        return LocalDateTime.ofEpochSecond(ts, 0, ZoneOffset.UTC);
+        String time = jsonParser.getValueAsString();
+        return LocalDateTime.parse(time, FORMATTER);
     }
 }

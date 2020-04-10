@@ -36,6 +36,12 @@ public class FlightController {
         }
     }
 
+    @GetMapping("/{flightNo}/")
+    EntryFlight getFlightByNo(@PathVariable String flightNo) throws NotFoundException {
+        return FlightManager.findByFlightNo(flightNo)
+                .orElseThrow(() -> new NotFoundException("航班不存在"));
+    }
+
     @PostMapping("/id/{id}/")
     EntryFlight editFlight(@PathVariable int id, @RequestBody EntryFlight flight) throws NotFoundException {
         try {

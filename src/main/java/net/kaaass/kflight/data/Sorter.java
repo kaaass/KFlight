@@ -25,17 +25,6 @@ public class Sorter {
     }
 
     /**
-     * 降序排序
-     */
-    public static <S> void sortDesc(List<S> list, Comparator<S> comparator) {
-        var arr = list.toArray();
-        StableHybridSort.sort((S[]) arr, 0, arr.length, comparator);
-        for (int i = 0; i < arr.length; i++) {
-            list.set(arr.length - i - 1, (S) arr[i]);
-        }
-    }
-
-    /**
      * 对一系列航班进行排序
      *
      * @param method 排序方法，由一系列字母组成，小写为升序，大写为降序，从前至后为主要程度
@@ -88,7 +77,7 @@ public class Sorter {
             }
             // 排序
             if (Character.isUpperCase(ch))
-                sortDesc(flights, cmpr); // 大写倒序
+                sort(flights, cmpr.reversed()); // 大写倒序
             else
                 sort(flights, cmpr);
         }
