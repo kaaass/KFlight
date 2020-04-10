@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
 
 public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
     @Override

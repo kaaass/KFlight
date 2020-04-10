@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.util.FileUtils;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;

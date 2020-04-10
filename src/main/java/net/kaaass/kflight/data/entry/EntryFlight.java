@@ -3,10 +3,10 @@ package net.kaaass.kflight.data.entry;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
-import net.kaaass.kflight.util.LocalDateTimeDeserializer;
-import net.kaaass.kflight.util.LocalDateTimeSerializer;
 import net.kaaass.kflight.util.EntryCityDeserializer;
 import net.kaaass.kflight.util.EntryCitySerializer;
+import net.kaaass.kflight.util.LocalDateTimeDeserializer;
+import net.kaaass.kflight.util.LocalDateTimeSerializer;
 
 import java.time.LocalDateTime;
 import java.util.List;
