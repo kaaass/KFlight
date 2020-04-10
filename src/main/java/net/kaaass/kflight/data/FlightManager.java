@@ -126,10 +126,6 @@ public class FlightManager {
      */
     @Synchronized
     public static void addEntry(EntryFlight entryFlight) {
-        // 字段计算
-        entryFlight.setFlightTime(Duration.between(
-                entryFlight.getDepartureTime(), entryFlight.getLandingTime()).toSeconds());
-        entryFlight.setID(INSTANCE.data.size());
         // 添加对象
         INSTANCE.data.add(entryFlight);
         // 增加索引
@@ -242,6 +238,10 @@ public class FlightManager {
      * 增加索引并计算平均票价
      */
     private void addIndexFor(EntryFlight entryFlight) {
+        // 字段计算
+        entryFlight.setFlightTime(Duration.between(
+                entryFlight.getDepartureTime(), entryFlight.getLandingTime()).toSeconds());
+        entryFlight.setID(INSTANCE.data.size());
         // 增加索引
         INSTANCE.indexFlightNo.addIndexFor(entryFlight);
         INSTANCE.indexAirlineName.addIndexFor(entryFlight);
