@@ -101,7 +101,7 @@ public class FlightManager {
      * 起降地索引
      */
     @Getter
-    private Index<EntryFlight, String, Integer> indexFromTo;
+    private Index<EntryFlight, CityTimeIndex, CityTimeIndex.Hash> indexFromToTime;
 
     private FlightManager() {
         data = new ArrayList<>();
@@ -115,8 +115,10 @@ public class FlightManager {
                 CityTimeIndex::toHash, CityTimeIndex.Hash::compareTo);
         indexToTime = new Index<>(flight -> new CityTimeIndex(flight.getTo().getName(), flight.getDepartureTime()),
                 CityTimeIndex::toHash, CityTimeIndex.Hash::compareTo);
-        indexFromTo = new Index<>(flight -> flight.getFrom().getName() + SEPARATOR
-                + flight.getTo().getName(), String::hashCode, Comparator.naturalOrder());
+        indexFromToTime = new Index<>(flight ->
+                new CityTimeIndex(flight.getFrom().getName() + SEPARATOR
+                        + flight.getTo().getName(), flight.getDepartureTime()),
+                CityTimeIndex::toHash, CityTimeIndex.Hash::compareTo);
     }
 
     /**
@@ -152,11 +154,15 @@ public class FlightManager {
     }
 
     /**
-     * 根据起降地寻找航班
+     * 根据起降地与日期寻找航班
      */
-    public static List<EntryFlight> findAllByFromTo(EntryCity from, EntryCity to) {
-        return INSTANCE.indexFromTo
-                .findAll(from.getName() + SEPARATOR + to.getName())
+    public static List<EntryFlight> findAllByFromToAndDate(EntryCity from, EntryCity to, LocalDate date) {
+        var start = new CityTimeIndex(from.getName() + SEPARATOR + to.getName(),
+                date.atStartOfDay());
+        var end = new CityTimeIndex(from.getName() + SEPARATOR + to.getName(),
+                date.plusDays(1).atStartOfDay());
+        return INSTANCE.indexFromToTime
+                .findBetween(start, end)
                 .parallelStream()
                 .filter(flight -> flight.getFrom().equals(from) && flight.getTo().equals(to))
                 .collect(Collectors.toList());
@@ -243,7 +249,7 @@ public class FlightManager {
         INSTANCE.indexLandingTime.addIndexFor(entryFlight);
         INSTANCE.indexFromTime.addIndexFor(entryFlight);
         INSTANCE.indexToTime.addIndexFor(entryFlight);
-        INSTANCE.indexFromTo.addIndexFor(entryFlight);
+        INSTANCE.indexFromToTime.addIndexFor(entryFlight);
         // 计算城市平均票价
         var from = entryFlight.getFrom();
         var avg = from.getAvgCnt();
@@ -267,7 +273,7 @@ public class FlightManager {
         INSTANCE.indexLandingTime.removeIndexFor(entryFlight);
         INSTANCE.indexFromTime.removeIndexFor(entryFlight);
         INSTANCE.indexToTime.removeIndexFor(entryFlight);
-        INSTANCE.indexFromTo.removeIndexFor(entryFlight);
+        INSTANCE.indexFromToTime.removeIndexFor(entryFlight);
     }
 
     /**
@@ -281,7 +287,7 @@ public class FlightManager {
         INSTANCE.indexLandingTime.clear();
         INSTANCE.indexFromTime.clear();
         INSTANCE.indexToTime.clear();
-        INSTANCE.indexFromTo.clear();
+        INSTANCE.indexFromToTime.clear();
     }
 
     public static FlightManager getInstance() {
