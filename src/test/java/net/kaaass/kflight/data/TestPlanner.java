@@ -70,4 +70,16 @@ public class TestPlanner {
         var limit = Planner.searchGapMulti(result, from, to, LocalDate.of(2020, 4, 9), 100);
         System.out.println("Search limit used: " + (100 - limit));
     }
+
+    /**
+     * 测试转机计划规划
+     */
+    @Test
+    public void testPlan() {
+        var from = CityManager.findByName("温州").orElseThrow();
+        var to = CityManager.findByName("长春").orElseThrow();
+        var date = LocalDate.of(2020, 4, 9);
+        var result = Planner.plan(from, to, date);
+        System.out.println(result);
+    }
 }

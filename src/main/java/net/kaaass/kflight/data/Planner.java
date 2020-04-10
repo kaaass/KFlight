@@ -22,6 +22,8 @@ import java.util.stream.Stream;
  */
 public class Planner {
 
+    public final static int DEFAULT_SEARCH_LIMIT = 50;
+
     /**
      * 飞行计划
      */
@@ -37,8 +39,12 @@ public class Planner {
      * 制定机票中转方案
      */
     public static List<FlightPlan> plan(EntryCity from, EntryCity to, LocalDate date) {
-        // TODO
-        return Collections.emptyList();
+        int limit = DEFAULT_SEARCH_LIMIT;
+        var result = new ArrayList<FlightPlan>();
+        limit = searchGapOne(result, from, to, date, limit);
+        searchGapMulti(result, from, to, date, limit);
+        planSort(result);
+        return result;
     }
 
     /**
@@ -202,6 +208,26 @@ public class Planner {
                             return new FlightPlan(totalCost, totalTime, flights);
                         })
         );
+    }
+
+    /**
+     * 对转机计划进行排序
+     */
+    static void planSort(List<FlightPlan> plan) {
+        var cost = plan.parallelStream()
+                .reduce(0F, (acc, p) -> acc + p.totalCost, Float::sum);
+        var time = plan.parallelStream()
+                .reduce(0F, (acc, p) -> acc + p.totalTime, Float::sum);
+        Sorter.sort(plan, (o1, o2) -> {
+            int cmp = Integer.compare(o1.flights.size(), o2.flights.size());
+            // 优先取转机次数少的
+            if (cmp == 0) {
+                var val1 = o1.totalCost / cost + o1.totalTime / time;
+                var val2 = o1.totalCost / cost + o1.totalTime / time;
+                cmp = Float.compare(val1, val2);
+            }
+            return cmp;
+        });
     }
 
     /**
