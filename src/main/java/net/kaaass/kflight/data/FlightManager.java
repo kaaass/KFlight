@@ -10,10 +10,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -130,26 +127,11 @@ public class FlightManager {
         // 字段计算
         entryFlight.setFlightTime(Duration.between(
                 entryFlight.getDepartureTime(), entryFlight.getLandingTime()).toSeconds());
+        entryFlight.setID(INSTANCE.data.size());
         // 添加对象
         INSTANCE.data.add(entryFlight);
-        INSTANCE.indexFlightNo.addIndexFor(entryFlight);
-        INSTANCE.indexAirlineName.addIndexFor(entryFlight);
-        INSTANCE.indexDepartureTime.addIndexFor(entryFlight);
-        INSTANCE.indexLandingTime.addIndexFor(entryFlight);
-        INSTANCE.indexFromTime.addIndexFor(entryFlight);
-        INSTANCE.indexToTime.addIndexFor(entryFlight);
-        INSTANCE.indexFromTo.addIndexFor(entryFlight);
-        // 计算城市平均票价
-        var from = entryFlight.getFrom();
-        var avg = from.getAvgCnt();
-        var price = from.getAvgPrice();
-        from.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / (avg + 1));
-        from.setAvgCnt(avg + 1);
-        var to = entryFlight.getTo();
-        avg = to.getAvgCnt();
-        price = to.getAvgPrice();
-        to.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / (avg + 1));
-        to.setAvgCnt(avg + 1);
+        // 增加索引
+        INSTANCE.addIndexFor(entryFlight);
     }
 
     /**
@@ -158,13 +140,8 @@ public class FlightManager {
     @Synchronized
     public static void removeEntry(EntryFlight entryFlight) {
         INSTANCE.data.remove(entryFlight);
-        INSTANCE.indexFlightNo.removeIndexFor(entryFlight);
-        INSTANCE.indexAirlineName.removeIndexFor(entryFlight);
-        INSTANCE.indexDepartureTime.removeIndexFor(entryFlight);
-        INSTANCE.indexLandingTime.removeIndexFor(entryFlight);
-        INSTANCE.indexFromTime.removeIndexFor(entryFlight);
-        INSTANCE.indexToTime.removeIndexFor(entryFlight);
-        INSTANCE.indexFromTo.removeIndexFor(entryFlight);
+        INSTANCE.reId();
+        INSTANCE.removeIndexFor(entryFlight);
     }
 
     /**
@@ -216,6 +193,81 @@ public class FlightManager {
                 .parallelStream()
                 .filter(flight -> flight.getTo().equals(city))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 获得所有航班信息
+     */
+    public static List<EntryFlight> getAll() {
+        return INSTANCE.data;  // Bad, better use Collections::unmodifiedList
+    }
+
+    /**
+     * 更新
+     */
+    public static void updateById(int id, EntryFlight newFlight) throws IndexOutOfBoundsException {
+        var old = INSTANCE.data.get(id);
+        INSTANCE.removeIndexFor(old);
+        // 重建索引
+        INSTANCE.data.set(id, newFlight);
+        INSTANCE.addIndexFor(newFlight);
+    }
+
+    /**
+     * 由 ID 获取航班
+     */
+    public static EntryFlight getById(int id) throws IndexOutOfBoundsException {
+        return INSTANCE.data.get(id);
+    }
+
+    /**
+     * 重新编码航班记录 ID
+     */
+    private void reId() {
+        for (int i = 0; i < data.size(); i++) {
+            var cur = data.get(i);
+            if (cur != null) {
+                cur.setID(i);
+            }
+        }
+    }
+
+    /**
+     * 增加索引并计算平均票价
+     */
+    private void addIndexFor(EntryFlight entryFlight) {
+        // 增加索引
+        INSTANCE.indexFlightNo.addIndexFor(entryFlight);
+        INSTANCE.indexAirlineName.addIndexFor(entryFlight);
+        INSTANCE.indexDepartureTime.addIndexFor(entryFlight);
+        INSTANCE.indexLandingTime.addIndexFor(entryFlight);
+        INSTANCE.indexFromTime.addIndexFor(entryFlight);
+        INSTANCE.indexToTime.addIndexFor(entryFlight);
+        INSTANCE.indexFromTo.addIndexFor(entryFlight);
+        // 计算城市平均票价
+        var from = entryFlight.getFrom();
+        var avg = from.getAvgCnt();
+        var price = from.getAvgPrice();
+        from.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / (avg + 1));
+        from.setAvgCnt(avg + 1);
+        var to = entryFlight.getTo();
+        avg = to.getAvgCnt();
+        price = to.getAvgPrice();
+        to.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / (avg + 1));
+        to.setAvgCnt(avg + 1);
+    }
+
+    /**
+     * 删除索引
+     */
+    private void removeIndexFor(EntryFlight entryFlight) {
+        INSTANCE.indexFlightNo.removeIndexFor(entryFlight);
+        INSTANCE.indexAirlineName.removeIndexFor(entryFlight);
+        INSTANCE.indexDepartureTime.removeIndexFor(entryFlight);
+        INSTANCE.indexLandingTime.removeIndexFor(entryFlight);
+        INSTANCE.indexFromTime.removeIndexFor(entryFlight);
+        INSTANCE.indexToTime.removeIndexFor(entryFlight);
+        INSTANCE.indexFromTo.removeIndexFor(entryFlight);
     }
 
     /**

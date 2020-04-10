@@ -3,6 +3,7 @@ package net.kaaass.kflight.data;
 import lombok.Getter;
 import lombok.Synchronized;
 import net.kaaass.kflight.data.entry.EntryCity;
+import net.kaaass.kflight.data.entry.EntryFlight;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,6 +50,13 @@ public class CityManager {
      */
     public static Optional<EntryCity> findByName(String name) {
         return INSTANCE.indexName.findOne(name);
+    }
+
+    /**
+     * 获得所有城市信息
+     */
+    public static List<EntryCity> getAll() {
+        return INSTANCE.data;  // Bad, better use Collections::unmodifiedList
     }
 
     /**

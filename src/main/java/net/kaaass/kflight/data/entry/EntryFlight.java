@@ -7,8 +7,10 @@ import net.kaaass.kflight.util.EntryCityDeserializer;
 import net.kaaass.kflight.util.EntryCitySerializer;
 import net.kaaass.kflight.util.LocalDateTimeDeserializer;
 import net.kaaass.kflight.util.LocalDateTimeSerializer;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -52,6 +54,10 @@ public class EntryFlight implements IEntry {
          */
         CANCELED
     }
+
+    @Setter
+    @Nullable
+    Integer ID = null;
 
     /**
      * 航班状态
@@ -138,5 +144,5 @@ public class EntryFlight implements IEntry {
     /**
      * 当前有效票
      */
-    List<EntryTicketOrder> tickets;
+    List<EntryTicketOrder> tickets = new ArrayList<>();
 }
