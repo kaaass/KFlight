@@ -47,7 +47,7 @@ public class TestPlanner {
      * 测试单城市间隔转机
      */
     @Test
-    public void testSearchGapMulti() {
+    public void testSearchGapOne() {
         var from = CityManager.findByName("温州").orElseThrow();
         var to = CityManager.findByName("长春").orElseThrow();
         var result = new ArrayList<Planner.FlightPlan>();
@@ -57,5 +57,17 @@ public class TestPlanner {
         assertTrue(result.contains(planOf("CA0809", "CA1014")));
         assertTrue(result.contains(planOf("AQ1013", "AQ1417")));
         assertTrue(result.contains(planOf("CA0910", "CA1519")));
+    }
+
+    /**
+     * 测试多间隔转机
+     */
+    @Test
+    public void testSearchGapMulti() {
+        var from = CityManager.findByName("温州").orElseThrow();
+        var to = CityManager.findByName("长春").orElseThrow();
+        var result = new ArrayList<Planner.FlightPlan>();
+        var limit = Planner.searchGapMulti(result, from, to, LocalDate.of(2020, 4, 9), 100);
+        System.out.println("Search limit used: " + (100 - limit));
     }
 }

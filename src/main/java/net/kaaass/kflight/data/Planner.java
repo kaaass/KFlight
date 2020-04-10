@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -105,8 +106,102 @@ public class Planner {
      * 寻找两个转机多次的方案
      */
     static int searchGapMulti(List<FlightPlan> result, EntryCity from, EntryCity to, LocalDate date, int searchLimit) {
-        // TODO
-        return searchLimit;
+        var tos = FlightManager.findByToAndDate(to, date);
+        // 提取中转城市集合
+        var tosCitySet = tos.parallelStream()
+                .map(EntryFlight::getFrom) // 到达航班的出发
+                .collect(HashSet<EntryCity>::new, HashSet::insert, HashSet::addAll);
+        var tosCity = tosCitySet.toList();
+        // 对中转城市集合进行排序，计算和
+        Sorter.sort(tosCity, (o1, o2) -> Float.compare(o1.getAvgPrice(), o2.getAvgPrice()));
+        var sum = tosCity.stream()
+                .reduce(0F, (acc, city) -> acc + 1e6f / city.getAvgPrice(), Float::sum);
+        // Random walk 选择
+        var rand = new Random();
+        var ret = new ArrayList<FlightPlan>();
+        while (searchLimit > 0 && !tosCity.isEmpty()) {  // 防止精度问题
+            searchLimit--;
+            var t = rand.nextFloat() * sum;
+            EntryCity mid = null;
+            for (var city : tosCity) {
+                t -= 1e6f / city.getAvgPrice();
+                if (t < 1) {  // 进行选择
+                    mid = city;
+                    sum -= city.getAvgPrice();
+                    break;
+                }
+            }
+            if (mid == null)
+                mid = tosCity.get(0);
+            // 删除城市防止重复
+            tosCity.remove(mid);
+            sum -= 1e6f / mid.getAvgPrice();
+            // 对该城市计算 One gap
+            ret.clear();
+            searchLimit = searchGapOne(ret, from, mid, date, searchLimit);
+            // 取所有 mid -> to 的航班
+            var finalMid = mid;
+            var midTos = tos.stream()
+                    .filter(flight -> flight.getFrom().equals(finalMid))
+                    .filter(Planner::couldSellTicket)
+                    .collect(Collectors.toList());
+            // 筛选，并加入最终结果
+            var limit = new AtomicInteger(searchLimit);
+            planConcatFlight(ret, midTos, limit).forEach(result::add);
+            searchLimit = limit.get();
+        }
+        // 多层级递归搜索
+        var limit = new AtomicInteger(searchLimit);
+        tosCitySet.forEach(mid -> {
+            if (limit.get() > 0) {
+                ret.clear();
+                limit.set(searchGapMulti(ret, from, mid, date, limit.get()));
+                if (!ret.isEmpty()) {
+                    // 取所有 mid -> to 的航班
+                    var midTos = tos.stream()
+                            .filter(flight -> flight.getFrom().equals(mid))
+                            .filter(Planner::couldSellTicket)
+                            .collect(Collectors.toList());
+                    // 筛选，并加入最终结果
+                    planConcatFlight(ret, midTos, limit).forEach(result::add);
+                }
+            }
+        });
+        return limit.get();
+    }
+
+    /**
+     * 将若干转机计划与航班拼接
+     */
+    private static Stream<FlightPlan> planConcatFlight(List<FlightPlan> plans, List<EntryFlight> midTos, AtomicInteger limit) {
+        return plans.parallelStream().flatMap(plan -> limit.get() <= 0 ? Stream.empty() : // 确保搜索未超界限
+                midTos.parallelStream()
+                        .filter(nxtFlight -> {  // 使用 flatMap 嵌套模拟笛卡尔积
+                            // 参数：plan、toFlight
+                            // 目的：筛选出符合转机要求的航班
+                            if (limit.get() <= 0)
+                                return false;
+                            limit.decrementAndGet();
+                            // 航班间隔必须大于等于 40 分钟
+                            var dur = Duration.between(
+                                    plan.flights.get(plan.flights.size() - 1).getLandingTime(),
+                                    nxtFlight.getDepartureTime());
+                            if (dur.toMinutes() < 40)
+                                return false;
+                            // 其余情况则符合要求
+                            return true;
+                        })
+                        .map(nxtFlight -> {  // 包装为航班计划
+                            float totalCost = plan.totalCost
+                                    + nxtFlight.getTicketPrice();
+                            long totalTime =
+                                    Duration.between(plan.flights.get(0).getDepartureTime(),
+                                            nxtFlight.getLandingTime()).toSeconds();
+                            var flights = new ArrayList<>(plan.flights);
+                            flights.add(nxtFlight);
+                            return new FlightPlan(totalCost, totalTime, flights);
+                        })
+        );
     }
 
     /**

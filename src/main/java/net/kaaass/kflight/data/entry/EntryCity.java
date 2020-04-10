@@ -8,7 +8,7 @@ import lombok.*;
  */
 @Getter
 @ToString
-@EqualsAndHashCode(exclude = {"avgPrice"})
+@EqualsAndHashCode(of = {"name"})
 @RequiredArgsConstructor
 public class EntryCity implements IEntry {
 
