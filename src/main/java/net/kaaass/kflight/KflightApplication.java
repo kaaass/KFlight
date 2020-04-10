@@ -9,5 +9,4 @@ public class KflightApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(KflightApplication.class, args);
 	}
-
 }
