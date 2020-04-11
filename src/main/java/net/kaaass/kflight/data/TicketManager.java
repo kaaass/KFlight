@@ -1,8 +1,11 @@
 package net.kaaass.kflight.data;
 
+import net.kaaass.kflight.KflightApplication;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.data.entry.EntryTicketOrder;
 import net.kaaass.kflight.data.structure.LinkedQueue;
+import net.kaaass.kflight.event.TicketWithdrawEvent;
+import net.kaaass.kflight.eventhandle.SubscribeEvent;
 import net.kaaass.kflight.exception.BadRequestException;
 import net.kaaass.kflight.exception.NotFoundException;
 
@@ -55,13 +58,15 @@ public class TicketManager {
             throw new NotFoundException("未找到此机票！");
         found.forEach(tickets::remove);
         flight.setRestCabin(flight.getRestCabin() + found.size());
-        // TODO: 触发退票事件
+        // 触发退票事件
+        KflightApplication.EVENT_BUS.post(new TicketWithdrawEvent(flight, phone));
     }
 
     /**
      * 检查队列中的票是否可售
      */
-    public static synchronized void checkQueue() {
+    @SubscribeEvent
+    public synchronized void checkQueue(TicketWithdrawEvent event) {
         var rest = new LinkedQueue<EntryTicketOrder>();
         while (!QUEUE.isEmpty()) {
             var order = QUEUE.popFront();
@@ -85,5 +90,9 @@ public class TicketManager {
             if (isFlightBooking(cur.getFlight()))
                 QUEUE.push(cur);
         }
+    }
+
+    static {
+        KflightApplication.EVENT_BUS.register(new TicketManager());
     }
 }
