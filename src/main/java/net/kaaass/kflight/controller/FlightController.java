@@ -29,11 +29,8 @@ public class FlightController {
 
     @GetMapping("/id/{id}/")
     EntryFlight getFlightById(@PathVariable int id) throws NotFoundException {
-        try {
-            return FlightManager.getById(id);
-        } catch (IndexOutOfBoundsException e) {
-            throw new NotFoundException("航班ID不存在");
-        }
+        return FlightManager.getById(id)
+                .orElseThrow(() -> new NotFoundException("未找到此ID的航班信息！"));
     }
 
     @GetMapping("/{flightNo}/")
@@ -44,21 +41,15 @@ public class FlightController {
 
     @PostMapping("/id/{id}/")
     EntryFlight editFlight(@PathVariable int id, @RequestBody EntryFlight flight) throws NotFoundException {
-        try {
-            FlightManager.updateById(id, flight);
-        } catch (IndexOutOfBoundsException e) {
-            throw new NotFoundException("航班ID不存在");
-        }
+        FlightManager.updateById(id, flight);
         return flight;
     }
 
     @DeleteMapping("/id/{id}/")
     void removeFlight(@PathVariable int id) throws NotFoundException {
-        try {
-            FlightManager.removeEntry(FlightManager.getById(id));
-        } catch (IndexOutOfBoundsException e) {
-            throw new NotFoundException("航班ID不存在");
-        }
+        var flight = FlightManager.getById(id)
+                .orElseThrow(() -> new NotFoundException("未找到此ID的航班信息！"));
+        FlightManager.removeEntry(flight);
     }
 
     @GetMapping("/import/")

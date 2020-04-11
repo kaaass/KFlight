@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Synchronized;
 import net.kaaass.kflight.data.entry.EntryCity;
 import net.kaaass.kflight.data.entry.EntryFlight;
+import net.kaaass.kflight.exception.NotFoundException;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -207,8 +208,9 @@ public class FlightManager {
     /**
      * 更新
      */
-    public static void updateById(int id, EntryFlight newFlight) throws IndexOutOfBoundsException {
-        var old = INSTANCE.data.get(id);
+    public static void updateById(int id, EntryFlight newFlight) throws NotFoundException {
+        var old = getById(id)
+                .orElseThrow(() -> new NotFoundException("未找到此ID的航班信息！"));
         INSTANCE.removeIndexFor(old);
         // 重建索引
         INSTANCE.data.set(id, newFlight);
@@ -218,8 +220,11 @@ public class FlightManager {
     /**
      * 由 ID 获取航班
      */
-    public static EntryFlight getById(int id) throws IndexOutOfBoundsException {
-        return INSTANCE.data.get(id);
+    public static Optional<EntryFlight> getById(int id) {
+        var data = INSTANCE.data;
+        if (id < 0 || id >= data.size())
+            return Optional.empty();
+        return Optional.of(INSTANCE.data.get(id));
     }
 
     /**
