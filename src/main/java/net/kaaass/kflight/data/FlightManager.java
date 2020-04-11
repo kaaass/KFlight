@@ -3,8 +3,12 @@ package net.kaaass.kflight.data;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
+import net.kaaass.kflight.KflightApplication;
 import net.kaaass.kflight.data.entry.EntryCity;
 import net.kaaass.kflight.data.entry.EntryFlight;
+import net.kaaass.kflight.event.FlightDelayedEvent;
+import net.kaaass.kflight.eventhandle.SubscribeEvent;
 import net.kaaass.kflight.exception.NotFoundException;
 
 import java.time.Duration;
@@ -17,13 +21,19 @@ import java.util.stream.Collectors;
 /**
  * 航班数据管理
  */
+@Slf4j
 public class FlightManager {
 
     private final static String SEPARATOR = ";";
 
-    private static final FlightManager INSTANCE = new FlightManager();
+    private static final FlightManager INSTANCE;
 
     private List<EntryFlight> data;
+
+    static {
+        INSTANCE = new FlightManager();
+        KflightApplication.EVENT_BUS.register(INSTANCE);
+    }
 
     /*
     索引
@@ -63,6 +73,10 @@ public class FlightManager {
 
         Hash toHash() {
             return new Hash(cityName.hashCode(), time.toEpochSecond(ZoneOffset.UTC));
+        }
+
+        static String nameFromTo(EntryCity from, EntryCity to) {
+            return from.getName() + SEPARATOR + to.getName();
         }
 
         /**
@@ -117,8 +131,8 @@ public class FlightManager {
         indexToTime = new Index<>(flight -> new CityTimeIndex(flight.getTo().getName(), flight.getDepartureTime()),
                 CityTimeIndex::toHash, CityTimeIndex.Hash::compareTo);
         indexFromToTime = new Index<>(flight ->
-                new CityTimeIndex(flight.getFrom().getName() + SEPARATOR
-                        + flight.getTo().getName(), flight.getDepartureTime()),
+                new CityTimeIndex(CityTimeIndex.nameFromTo(flight.getFrom(), flight.getTo()),
+                        flight.getDepartureTime()),
                 CityTimeIndex::toHash, CityTimeIndex.Hash::compareTo);
     }
 
@@ -154,9 +168,9 @@ public class FlightManager {
      * 根据起降地与日期寻找航班
      */
     public static List<EntryFlight> findAllByFromToAndDate(EntryCity from, EntryCity to, LocalDate date) {
-        var start = new CityTimeIndex(from.getName() + SEPARATOR + to.getName(),
+        var start = new CityTimeIndex(CityTimeIndex.nameFromTo(from, to),
                 date.atStartOfDay());
-        var end = new CityTimeIndex(from.getName() + SEPARATOR + to.getName(),
+        var end = new CityTimeIndex(CityTimeIndex.nameFromTo(from, to),
                 date.plusDays(1).atStartOfDay());
         return INSTANCE.indexFromToTime
                 .findBetween(start, end)
@@ -266,6 +280,64 @@ public class FlightManager {
         price = to.getAvgPrice();
         to.setAvgPrice(price * avg / (avg + 1) + entryFlight.getTicketPrice() / (avg + 1));
         to.setAvgCnt(avg + 1);
+    }
+
+    /**
+     * 查找同起降地未延期的最近航班
+     */
+    public static Optional<EntryFlight> searchClosetFlight(EntryFlight flight) {
+        var from = flight.getFrom();
+        var to = flight.getTo();
+
+        var startHash = new CityTimeIndex.Hash(CityTimeIndex.nameFromTo(from, to).hashCode(),
+                flight.getDepartureTime().toEpochSecond(ZoneOffset.UTC));
+        var endHash = new CityTimeIndex.Hash(CityTimeIndex.nameFromTo(from, to).hashCode(),
+                Long.MAX_VALUE);
+        var fromTos = INSTANCE.indexFromToTime.findBetweenHash(startHash, endHash);
+
+        return fromTos.stream()
+                .filter(aFlight ->
+                        aFlight.getState() == EntryFlight.State.BOOKING &&
+                                aFlight.getFrom().equals(from) &&
+                                aFlight.getTo().equals(to))
+                .findFirst();
+    }
+
+    /**
+     * 通过 ID 变更航班状态
+     *
+     * @return 若航延，返回推荐航班
+     */
+    public static EntryFlight changeState(int id,
+                                          EntryFlight.State state,
+                                          LocalDateTime delayTo) throws NotFoundException {
+        var flight = getById(id)
+                .orElseThrow(() -> new NotFoundException("未找到此ID的航班信息！"));
+        flight.setState(state);
+        if (state == EntryFlight.State.CANCELED || state == EntryFlight.State.DELAYED) {
+            var recommend = searchClosetFlight(flight);
+            if (delayTo != null)
+                flight.setDepartureTime(delayTo);
+            KflightApplication.EVENT_BUS.post(new FlightDelayedEvent(flight, recommend));
+            return recommend.orElse(null);
+        }
+        return null;
+    }
+
+    @SubscribeEvent
+    public void onFlightDelayed(FlightDelayedEvent event) {
+        var delayed = event.getDelayed();
+        var recommend = event.getRecommend();
+
+        // 模拟发短信
+        delayed.getTickets()
+                .forEach(order ->
+                        log.info("【短信发送】尊敬的 {}，非常抱歉的通知，您的乘坐的航班 {} 已经 {}。为您推荐就近的航班 {}。",
+                                order.getPhone(),
+                                delayed.getFlightNo(),
+                                delayed.getState() == EntryFlight.State.DELAYED ? "延误" : "取消",
+                                recommend.map(EntryFlight::getFlightNo)
+                                        .orElse("[无就近航班]")));
     }
 
     /**

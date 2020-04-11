@@ -125,8 +125,8 @@ public class EventBus implements IEventExceptionHandler {
                 listeners[index].invoke(event);
             }
         } catch (Throwable throwable) {
-            exceptionHandler.handleException(this, event, listeners, index, throwable);
-            throw throwable;
+//            exceptionHandler.handleException(this, event, listeners, index, throwable);
+//            throw throwable;
         }
         return (event.isCancelable() && event.isCanceled());
     }

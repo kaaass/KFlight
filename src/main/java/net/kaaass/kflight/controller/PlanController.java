@@ -16,7 +16,7 @@ public class PlanController {
     @GetMapping("/")
     List<Planner.FlightPlan> plan(@RequestParam String from,
                                   @RequestParam String to,
-                                  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) throws NotFoundException {
+                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) throws NotFoundException {
         var fromCity = CityManager.findByName(from)
                 .orElseThrow(() -> new NotFoundException("城市不存在！"));
         var toCity = CityManager.findByName(to)

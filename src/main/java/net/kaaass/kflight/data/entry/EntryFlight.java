@@ -64,6 +64,7 @@ public class EntryFlight implements IEntry {
     /**
      * 航班状态
      */
+    @Setter
     State state = State.BOOKING;
 
     /**

@@ -23,7 +23,7 @@ public class SearchController {
     @GetMapping("/from-to-date/")
     public List<EntryFlight> findAllByFromToAndDate(@RequestParam String from,
                                                     @RequestParam String to,
-                                                    @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                                    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                     @RequestParam(defaultValue = "dpR") String sort)
             throws NotFoundException, BadRequestException {
         var fromCity = CityManager.findByName(from)
@@ -36,8 +36,8 @@ public class SearchController {
     }
 
     @GetMapping("/between/")
-    public List<EntryFlight> findBetween(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+    public List<EntryFlight> findBetween(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                         @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                          @RequestParam(defaultValue = "dpR") String sort)
             throws BadRequestException {
         var result = FlightManager.findBetween(start, end);
@@ -47,7 +47,7 @@ public class SearchController {
 
     @GetMapping("/from-date/")
     public List<EntryFlight> findAllByFromAndDate(@RequestParam String from,
-                                                  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                   @RequestParam(defaultValue = "dpR") String sort)
             throws NotFoundException, BadRequestException {
         var fromCity = CityManager.findByName(from)
@@ -59,7 +59,7 @@ public class SearchController {
 
     @GetMapping("/to-date/")
     public List<EntryFlight> findAllByToAndDate(@RequestParam String to,
-                                                @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                 @RequestParam(defaultValue = "dpR") String sort)
             throws NotFoundException, BadRequestException {
         var toCity = CityManager.findByName(to)

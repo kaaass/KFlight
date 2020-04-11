@@ -8,6 +8,8 @@ import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.eventhandle.Event;
 import net.kaaass.kflight.eventhandle.ListenerList;
 
+import java.util.Optional;
+
 /**
  * 退票事件
  */
@@ -15,15 +17,9 @@ import net.kaaass.kflight.eventhandle.ListenerList;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class TicketWithdrawEvent extends Event {
+public class FlightDelayedEvent extends Event {
 
-    /**
-     * 退票航班
-     */
-    EntryFlight flight;
+    EntryFlight delayed;
 
-    /**
-     * 退票电话
-     */
-    String phone;
+    Optional<EntryFlight> recommend;
 }

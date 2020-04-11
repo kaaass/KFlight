@@ -23,9 +23,9 @@ public class TicketController {
     }
 
     @PostMapping("/order/id/{id}/")
-    public EntryTicketOrder orderById(@PathVariable String id,
+    public EntryTicketOrder orderById(@PathVariable int id,
                                       @RequestParam String phone) throws NotFoundException, BadRequestException {
-        var flight = FlightManager.getById(Integer.parseInt(id))
+        var flight = FlightManager.getById(id)
                 .orElseThrow(() -> new NotFoundException("未找到此航班！"));
         var order = new EntryTicketOrder(flight, phone);
         return TicketManager.orderTicket(order);
@@ -40,9 +40,9 @@ public class TicketController {
     }
 
     @PostMapping("/withdraw/id/{id}/")
-    public void withdrawById(@PathVariable String id,
+    public void withdrawById(@PathVariable int id,
                              @RequestParam String phone) throws NotFoundException, BadRequestException {
-        var flight = FlightManager.getById(Integer.parseInt(id))
+        var flight = FlightManager.getById(id)
                 .orElseThrow(() -> new NotFoundException("未找到此航班！"));
         TicketManager.withdrawTicket(flight, phone);
     }

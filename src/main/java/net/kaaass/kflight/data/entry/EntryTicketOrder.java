@@ -1,10 +1,7 @@
 package net.kaaass.kflight.data.entry;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Data;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.lang.Nullable;
 
 /**
@@ -12,6 +9,7 @@ import org.springframework.lang.Nullable;
  */
 @Data
 @RequiredArgsConstructor
+@ToString(exclude = {"flight"})
 public class EntryTicketOrder {
 
     /**

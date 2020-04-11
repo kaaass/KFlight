@@ -123,9 +123,18 @@ public class Index<S extends IEntry, T, I> {
      * 寻找范围为 [low, high]
      */
     public List<S> findBetween(T low, T high) {
-        var result = new ArrayList<S>();
         var indLow = indexOf(low);
         var indHigh = indexOf(high);
+        return findBetweenHash(indLow, indHigh);
+    }
+
+    /**
+     * 通过索引项哈希寻找索引项之间的全部对象
+     * <p>
+     * 寻找范围为 [low, high]
+     */
+    public List<S> findBetweenHash(I indLow, I indHigh) {
+        var result = new ArrayList<S>();
         var cur = rbTree.findLowerBound(indLow);
         var end = rbTree.findUpperBound(indHigh);
         if (cur == null || end == null)

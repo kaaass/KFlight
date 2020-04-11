@@ -6,9 +6,11 @@ import net.kaaass.kflight.data.FlightManager;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.exception.BadRequestException;
 import net.kaaass.kflight.exception.NotFoundException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -60,5 +62,16 @@ public class FlightController {
             log.warn("打开文件失败", e);
             throw new BadRequestException("文件打开失败！请检查文件是否存在。");
         }
+    }
+
+    @PostMapping("/id/{id}/delay/")
+    EntryFlight publishDelayById(@PathVariable int id,
+                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime delayTo) throws NotFoundException {
+        return FlightManager.changeState(id, EntryFlight.State.DELAYED, delayTo);
+    }
+
+    @PostMapping("/id/{id}/cancel/")
+    EntryFlight publishCancelById(@PathVariable int id) throws NotFoundException {
+        return FlightManager.changeState(id, EntryFlight.State.CANCELED, null);
     }
 }
