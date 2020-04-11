@@ -1,10 +1,11 @@
-package net.kaaass.kflight.data;
+package net.kaaass.kflight.service;
 
 import lombok.Data;
 import lombok.Getter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import net.kaaass.kflight.KflightApplication;
+import net.kaaass.kflight.data.Index;
 import net.kaaass.kflight.data.entry.EntryCity;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.event.FlightDelayedEvent;
@@ -15,23 +16,26 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * 航班数据管理
  */
 @Slf4j
-public class FlightManager {
+public class FlightService {
 
     private final static String SEPARATOR = ";";
 
-    private static final FlightManager INSTANCE;
+    private static final FlightService INSTANCE;
 
     private List<EntryFlight> data;
 
     static {
-        INSTANCE = new FlightManager();
+        INSTANCE = new FlightService();
         KflightApplication.EVENT_BUS.register(INSTANCE);
     }
 
@@ -118,7 +122,7 @@ public class FlightManager {
     @Getter
     private Index<EntryFlight, CityTimeIndex, CityTimeIndex.Hash> indexFromToTime;
 
-    private FlightManager() {
+    private FlightService() {
         data = new ArrayList<>();
         // 索引初始化
         indexFlightNo = new Index<>(EntryFlight::getFlightNo, String::hashCode, Comparator.naturalOrder());
@@ -368,7 +372,7 @@ public class FlightManager {
         INSTANCE.indexFromToTime.clear();
     }
 
-    public static FlightManager getInstance() {
+    public static FlightService getInstance() {
         return INSTANCE;
     }
 }

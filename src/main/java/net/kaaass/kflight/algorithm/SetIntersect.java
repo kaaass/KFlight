@@ -1,4 +1,4 @@
-package net.kaaass.kflight.data.algorithm;
+package net.kaaass.kflight.algorithm;
 
 import net.kaaass.kflight.data.structure.HashSet;
 

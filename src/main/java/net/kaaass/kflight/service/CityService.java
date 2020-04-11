@@ -1,9 +1,9 @@
-package net.kaaass.kflight.data;
+package net.kaaass.kflight.service;
 
 import lombok.Getter;
 import lombok.Synchronized;
+import net.kaaass.kflight.data.Index;
 import net.kaaass.kflight.data.entry.EntryCity;
-import net.kaaass.kflight.data.entry.EntryFlight;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,16 +13,16 @@ import java.util.Optional;
 /**
  * 城市数据管理
  */
-public class CityManager {
+public class CityService {
 
-    private static final CityManager INSTANCE = new CityManager();
+    private static final CityService INSTANCE = new CityService();
 
     private List<EntryCity> data;
 
     @Getter
     private Index<EntryCity, String, Integer> indexName;
 
-    private CityManager() {
+    private CityService() {
         data = new ArrayList<>();
         indexName = new Index<>(EntryCity::getName, String::hashCode, Comparator.naturalOrder());
     }
@@ -67,7 +67,7 @@ public class CityManager {
         INSTANCE.indexName.clear();
     }
 
-    public static CityManager getInstance() {
+    public static CityService getInstance() {
         return INSTANCE;
     }
 }

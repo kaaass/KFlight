@@ -1,6 +1,6 @@
-package net.kaaass.kflight.data.algorithm.sort;
+package net.kaaass.kflight.algorithm.sort;
 
-import net.kaaass.kflight.data.Sorter;
+import net.kaaass.kflight.algorithm.Sorter;
 import org.junit.Test;
 
 import java.util.Arrays;

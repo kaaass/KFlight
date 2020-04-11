@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.eventhandle.Event;
-import net.kaaass.kflight.eventhandle.ListenerList;
 
 /**
  * 退票事件

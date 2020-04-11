@@ -1,4 +1,4 @@
-package net.kaaass.kflight.data;
+package net.kaaass.kflight.service;
 
 import net.kaaass.kflight.KflightApplication;
 import net.kaaass.kflight.data.entry.EntryFlight;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 /**
  * 票务管理
  */
-public class TicketManager {
+public class TicketService {
 
     static final LinkedQueue<EntryTicketOrder> QUEUE = new LinkedQueue<>();
 
@@ -101,6 +101,6 @@ public class TicketManager {
     }
 
     static {
-        KflightApplication.EVENT_BUS.register(new TicketManager());
+        KflightApplication.EVENT_BUS.register(new TicketService());
     }
 }

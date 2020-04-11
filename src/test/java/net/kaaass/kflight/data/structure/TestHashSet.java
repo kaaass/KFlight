@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
 
 /**
  * 哈希集合的单元测试

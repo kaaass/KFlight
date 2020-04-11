@@ -1,8 +1,9 @@
-package net.kaaass.kflight.data;
+package net.kaaass.kflight.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.kaaass.kflight.data.algorithm.SetIntersect;
+import net.kaaass.kflight.algorithm.SetIntersect;
+import net.kaaass.kflight.algorithm.Sorter;
 import net.kaaass.kflight.data.entry.EntryCity;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.data.structure.HashSet;
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
 /**
  * 航线规划类
  */
-public class Planner {
+public class PlanService {
 
     public final static int DEFAULT_SEARCH_LIMIT = 50;
 
@@ -41,9 +42,9 @@ public class Planner {
         int limit = DEFAULT_SEARCH_LIMIT;
         var result = new ArrayList<FlightPlan>();
         // 直达查找
-        FlightManager.findAllByFromToAndDate(from, to, date)
+        FlightService.findAllByFromToAndDate(from, to, date)
                 .parallelStream()
-                .map(Planner::planFor)
+                .map(PlanService::planFor)
                 .forEach(result::add);
         // 转机查找
         limit = searchGapOne(result, from, to, date, limit);
@@ -56,8 +57,8 @@ public class Planner {
      * 寻找两个转机 1 次的方案
      */
     static int searchGapOne(List<FlightPlan> result, EntryCity from, EntryCity to, LocalDate date, int searchLimit) {
-        var froms = FlightManager.findByFromAndDate(from, date);
-        var tos = FlightManager.findByToAndDate(to, date);
+        var froms = FlightService.findByFromAndDate(from, date);
+        var tos = FlightService.findByToAndDate(to, date);
         // 提取中转城市集合
         var fromsCity = froms.parallelStream()
                 .map(flight -> flight.getTo().getName()) // 出发航班的目的
@@ -70,10 +71,10 @@ public class Planner {
         // 找出所有中转航班
         var fromFlightsStream = froms.parallelStream()
                 .filter(flight -> midCity.inSet(flight.getTo().getName()))
-                .filter(Planner::couldSellTicket);  // 保证可购买
+                .filter(PlanService::couldSellTicket);  // 保证可购买
         var toFlights = tos.parallelStream()
                 .filter(flight -> midCity.inSet(flight.getFrom().getName()))
-                .filter(Planner::couldSellTicket)
+                .filter(PlanService::couldSellTicket)
                 .collect(Collectors.toList());  // 保证可购买
         // 对中转航班进行筛选，并拼接结果
         var limit = new AtomicInteger(searchLimit);
@@ -117,7 +118,7 @@ public class Planner {
      * 寻找两个转机多次的方案
      */
     static int searchGapMulti(List<FlightPlan> result, EntryCity from, EntryCity to, LocalDate date, int searchLimit) {
-        var tos = FlightManager.findByToAndDate(to, date);
+        var tos = FlightService.findByToAndDate(to, date);
         // 提取中转城市集合
         var tosCitySet = tos.parallelStream()
                 .map(EntryFlight::getFrom) // 到达航班的出发
@@ -154,7 +155,7 @@ public class Planner {
             var finalMid = mid;
             var midTos = tos.stream()
                     .filter(flight -> flight.getFrom().equals(finalMid))
-                    .filter(Planner::couldSellTicket)
+                    .filter(PlanService::couldSellTicket)
                     .collect(Collectors.toList());
             // 筛选，并加入最终结果
             var limit = new AtomicInteger(searchLimit);
@@ -171,7 +172,7 @@ public class Planner {
                     // 取所有 mid -> to 的航班
                     var midTos = tos.stream()
                             .filter(flight -> flight.getFrom().equals(mid))
-                            .filter(Planner::couldSellTicket)
+                            .filter(PlanService::couldSellTicket)
                             .collect(Collectors.toList());
                     // 筛选，并加入最终结果
                     planConcatFlight(ret, midTos, limit).forEach(result::add);

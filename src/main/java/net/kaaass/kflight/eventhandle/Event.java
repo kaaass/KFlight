@@ -43,7 +43,7 @@ public class Event {
      * Events with the Cancelable annotation will have this method automatically added to return true.
      */
     public boolean isCancelable() {
-        for (var annotation: this.getClass().getAnnotations()) {
+        for (var annotation : this.getClass().getAnnotations()) {
             if (Cancelable.class.isAssignableFrom(annotation.getClass())) {
                 return true;
             }

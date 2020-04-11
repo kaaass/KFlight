@@ -9,7 +9,7 @@ public class KflightApplication {
 
     public static final EventBus EVENT_BUS = new EventBus();
 
-	public static void main(String[] args) {
-		SpringApplication.run(KflightApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(KflightApplication.class, args);
+    }
 }

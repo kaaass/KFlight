@@ -1,10 +1,10 @@
-package net.kaaass.kflight.data.algorithm.sort;
+package net.kaaass.kflight.algorithm.sort;
 
 import java.util.Comparator;
 
 /**
  * 稳定化快速排序，加入了三者取中、双枢轴优化
- *
+ * <p>
  * 优化思路参考 {@see #sort}
  */
 public class StableTriQuickSort {

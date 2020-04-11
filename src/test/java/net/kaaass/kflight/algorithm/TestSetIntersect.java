@@ -1,10 +1,9 @@
-package net.kaaass.kflight.data.algorithm;
+package net.kaaass.kflight.algorithm;
 
 import net.kaaass.kflight.data.structure.HashSet;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 /**
  * 哈希集合交集的单元测试

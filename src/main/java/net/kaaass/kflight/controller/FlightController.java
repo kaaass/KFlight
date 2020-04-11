@@ -2,10 +2,10 @@ package net.kaaass.kflight.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.kaaass.kflight.data.DataLoader;
-import net.kaaass.kflight.data.FlightManager;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.exception.BadRequestException;
 import net.kaaass.kflight.exception.NotFoundException;
+import net.kaaass.kflight.service.FlightService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,38 +20,38 @@ public class FlightController {
 
     @GetMapping("/")
     List<EntryFlight> getAll() {
-        return FlightManager.getAll();
+        return FlightService.getAll();
     }
 
     @PostMapping("/")
     EntryFlight addFlight(@RequestBody EntryFlight flight) {
-        FlightManager.addEntry(flight);
+        FlightService.addEntry(flight);
         return flight;
     }
 
     @GetMapping("/id/{id}/")
     EntryFlight getFlightById(@PathVariable int id) throws NotFoundException {
-        return FlightManager.getById(id)
+        return FlightService.getById(id)
                 .orElseThrow(() -> new NotFoundException("未找到此ID的航班信息！"));
     }
 
     @GetMapping("/{flightNo}/")
     EntryFlight getFlightByNo(@PathVariable String flightNo) throws NotFoundException {
-        return FlightManager.findByFlightNo(flightNo)
+        return FlightService.findByFlightNo(flightNo)
                 .orElseThrow(() -> new NotFoundException("航班不存在"));
     }
 
     @PostMapping("/id/{id}/")
     EntryFlight editFlight(@PathVariable int id, @RequestBody EntryFlight flight) throws NotFoundException {
-        FlightManager.updateById(id, flight);
+        FlightService.updateById(id, flight);
         return flight;
     }
 
     @DeleteMapping("/id/{id}/")
     void removeFlight(@PathVariable int id) throws NotFoundException {
-        var flight = FlightManager.getById(id)
+        var flight = FlightService.getById(id)
                 .orElseThrow(() -> new NotFoundException("未找到此ID的航班信息！"));
-        FlightManager.removeEntry(flight);
+        FlightService.removeEntry(flight);
     }
 
     @GetMapping("/import/")
@@ -67,11 +67,11 @@ public class FlightController {
     @PostMapping("/id/{id}/delay/")
     EntryFlight publishDelayById(@PathVariable int id,
                                  @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime delayTo) throws NotFoundException {
-        return FlightManager.changeState(id, EntryFlight.State.DELAYED, delayTo);
+        return FlightService.changeState(id, EntryFlight.State.DELAYED, delayTo);
     }
 
     @PostMapping("/id/{id}/cancel/")
     EntryFlight publishCancelById(@PathVariable int id) throws NotFoundException {
-        return FlightManager.changeState(id, EntryFlight.State.CANCELED, null);
+        return FlightService.changeState(id, EntryFlight.State.CANCELED, null);
     }
 }

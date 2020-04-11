@@ -1,11 +1,11 @@
 package net.kaaass.kflight.controller;
 
-import net.kaaass.kflight.data.CityManager;
-import net.kaaass.kflight.data.FlightManager;
-import net.kaaass.kflight.data.Sorter;
+import net.kaaass.kflight.algorithm.Sorter;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.exception.BadRequestException;
 import net.kaaass.kflight.exception.NotFoundException;
+import net.kaaass.kflight.service.CityService;
+import net.kaaass.kflight.service.FlightService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +26,11 @@ public class SearchController {
                                                     @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                     @RequestParam(defaultValue = "dpR") String sort)
             throws NotFoundException, BadRequestException {
-        var fromCity = CityManager.findByName(from)
+        var fromCity = CityService.findByName(from)
                 .orElseThrow(() -> new NotFoundException("城市不存在！"));
-        var toCity = CityManager.findByName(to)
+        var toCity = CityService.findByName(to)
                 .orElseThrow(() -> new NotFoundException("城市不存在！"));
-        var result = FlightManager.findAllByFromToAndDate(fromCity, toCity, date);
+        var result = FlightService.findAllByFromToAndDate(fromCity, toCity, date);
         Sorter.sortFlight(result, sort);
         return result;
     }
@@ -40,7 +40,7 @@ public class SearchController {
                                          @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                          @RequestParam(defaultValue = "dpR") String sort)
             throws BadRequestException {
-        var result = FlightManager.findBetween(start, end);
+        var result = FlightService.findBetween(start, end);
         Sorter.sortFlight(result, sort);
         return result;
     }
@@ -50,9 +50,9 @@ public class SearchController {
                                                   @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                   @RequestParam(defaultValue = "dpR") String sort)
             throws NotFoundException, BadRequestException {
-        var fromCity = CityManager.findByName(from)
+        var fromCity = CityService.findByName(from)
                 .orElseThrow(() -> new NotFoundException("城市不存在！"));
-        var result = FlightManager.findByFromAndDate(fromCity, date);
+        var result = FlightService.findByFromAndDate(fromCity, date);
         Sorter.sortFlight(result, sort);
         return result;
     }
@@ -62,9 +62,9 @@ public class SearchController {
                                                 @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                 @RequestParam(defaultValue = "dpR") String sort)
             throws NotFoundException, BadRequestException {
-        var toCity = CityManager.findByName(to)
+        var toCity = CityService.findByName(to)
                 .orElseThrow(() -> new NotFoundException("城市不存在！"));
-        var result = FlightManager.findByToAndDate(toCity, date);
+        var result = FlightService.findByToAndDate(toCity, date);
         Sorter.sortFlight(result, sort);
         return result;
     }

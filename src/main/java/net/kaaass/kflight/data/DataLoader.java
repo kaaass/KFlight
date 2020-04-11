@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.kaaass.kflight.data.entry.EntryFlight;
+import net.kaaass.kflight.service.FlightService;
 import net.kaaass.kflight.util.FileUtils;
 
 import java.io.FileNotFoundException;
@@ -39,7 +40,8 @@ public class DataLoader {
      */
     public static void loadFlightFromJson(String json) throws JsonProcessingException {
         var mapper = new ObjectMapper();
-        var list = mapper.readValue(json,new TypeReference<List<EntryFlight>>(){});
-        list.forEach(FlightManager::addEntry);
+        var list = mapper.readValue(json, new TypeReference<List<EntryFlight>>() {
+        });
+        list.forEach(FlightService::addEntry);
     }
 }

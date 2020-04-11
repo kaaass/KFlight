@@ -1,7 +1,6 @@
-package net.kaaass.kflight.data;
+package net.kaaass.kflight.algorithm;
 
-import net.kaaass.kflight.data.algorithm.sort.StableHybridSort;
-import net.kaaass.kflight.data.entry.EntryCity;
+import net.kaaass.kflight.algorithm.sort.StableHybridSort;
 import net.kaaass.kflight.data.entry.EntryFlight;
 import net.kaaass.kflight.exception.BadRequestException;
 
