@@ -1,5 +1,6 @@
 package net.kaaass.kflight.data.entry;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class EntryTicketOrder {
      * 对应航班
      */
     @NonNull
+    @JsonBackReference
     private EntryFlight flight;
 
     /**

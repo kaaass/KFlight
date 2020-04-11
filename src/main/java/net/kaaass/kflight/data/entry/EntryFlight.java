@@ -1,5 +1,7 @@
 package net.kaaass.kflight.data.entry;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
@@ -144,5 +146,6 @@ public class EntryFlight implements IEntry {
     /**
      * 当前有效票
      */
+    @JsonManagedReference
     List<EntryTicketOrder> tickets = new ArrayList<>();
 }

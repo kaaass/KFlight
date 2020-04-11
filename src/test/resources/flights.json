@@ -9,8 +9,8 @@
     "to": "杭州",
     "middle": null,
     "middleTime": 0,
-    "totalCabin": 200,
-    "restCabin": 200,
+    "totalCabin": 2,
+    "restCabin": 2,
     "ticketPrice": 320,
     "tickets": []
   },
