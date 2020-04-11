@@ -2,8 +2,11 @@ package net.kaaass.kflight.data.structure;
 
 import lombok.AllArgsConstructor;
 
+import java.util.function.Consumer;
+
 /**
  * 链式队列
+ *
  * @param <S>
  */
 public class LinkedQueue<S> {
@@ -58,5 +61,13 @@ public class LinkedQueue<S> {
 
     public boolean isEmpty() {
         return size() <= 0;
+    }
+
+    public void forEach(Consumer<S> consumer) {
+        for (var it = head;
+             it != null;
+             it = it.next) {
+            consumer.accept(it.data);
+        }
     }
 }
