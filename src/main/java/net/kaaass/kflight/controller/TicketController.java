@@ -7,6 +7,8 @@ import net.kaaass.kflight.exception.BadRequestException;
 import net.kaaass.kflight.exception.NotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/ticket")
 public class TicketController {
@@ -39,5 +41,10 @@ public class TicketController {
     public void withdrawById(@PathVariable String id,
                              @RequestParam String phone) throws NotFoundException, BadRequestException {
         // TODO
+    }
+
+    @GetMapping("/queue/")
+    public List<EntryTicketOrder> withdrawById() {
+        return TicketManager.getTicketsInQueue();
     }
 }

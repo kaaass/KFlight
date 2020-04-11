@@ -9,6 +9,8 @@ import net.kaaass.kflight.eventhandle.SubscribeEvent;
 import net.kaaass.kflight.exception.BadRequestException;
 import net.kaaass.kflight.exception.NotFoundException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +62,12 @@ public class TicketManager {
         flight.setRestCabin(flight.getRestCabin() + found.size());
         // 触发退票事件
         KflightApplication.EVENT_BUS.post(new TicketWithdrawEvent(flight, phone));
+    }
+
+    public static List<EntryTicketOrder> getTicketsInQueue() {
+        var ret = new ArrayList<EntryTicketOrder>();
+        QUEUE.forEach(ret::add);
+        return ret;
     }
 
     /**
