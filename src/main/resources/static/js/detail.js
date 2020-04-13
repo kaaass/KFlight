@@ -68,7 +68,7 @@ require([
             // 发布延误
             $('#delay').click(() => {
                 let delayTo = prompt("请输入延迟后的起飞时间");
-                if (delayTo === undefined || delayTo.length <= 0) {
+                if (delayTo === null || delayTo.length <= 0) {
                     functions.modal("错误", "起飞时间不能为空！");
                     return;
                 }
