@@ -1,0 +1,87 @@
+<div class="container pt-4 py-3">
+    <div class="row m-1">
+        <h2>航班详情</h2>
+    </div>
+    <div class="row text-secondary ml-1">
+        <small>航班内容的详细展示</small>
+    </div>
+</div>
+
+<div class="container py-2">
+    <div class="row m-1 py-2">
+        <h5>航班信息</h5>
+    </div>
+
+    <div class="row no-gutters bg-white p-3 mr-2 d-flex flex-column border rounded overflow-hidden shadow-sm">
+        <h3 class="m-2 text-center">{{airlineName}} {{flightNo}}</h3>
+        <small class="d-inline-block text-secondary text-center">航班状态：{{state}}</small>
+    </div>
+
+    <div class="row no-gutters bg-white p-3 mr-2 d-flex flex-column border rounded overflow-hidden shadow-sm">
+        <h3 class="m-2 text-center">{{from}} → {{to}}</h3>
+        <small class="d-inline-block text-secondary text-center">起飞时间：{{departureTime}}</small>
+        <small class="d-inline-block text-secondary text-center">降落时间：{{landingTime}}</small>
+        <small class="d-inline-block text-secondary text-center">飞行时间（小时）：{{flightTimeHour}}</small>
+        {{#if middle}}
+            <small class="d-inline-block text-secondary text-center">经传城市：{{middle}}</small>
+            <small class="d-inline-block text-secondary text-center">经传时间：{{middleTime}}</small>
+        {{/if}}
+    </div>
+</div>
+
+<div class="container py-2">
+    <div class="row m-1 py-2">
+        <h5>票务信息</h5>
+    </div>
+
+    <div class="row no-gutters bg-white p-3 mr-2 d-flex flex-column border rounded overflow-hidden shadow-sm">
+        <h3 class="m-2 text-center">当前票价：¥ {{ticketPrice}}</h3>
+        <small class="d-inline-block text-secondary text-center">剩余票数：{{restCabin}}</small>
+        <small class="d-inline-block text-secondary text-center">客舱大小：{{totalCabin}}</small>
+    </div>
+</div>
+
+<div class="container pt-4">
+    <div class="row ml-2">
+        <h5>操作</h5>
+    </div>
+</div>
+
+<div class="container py-2">
+    <div class="container pt-3 bg-white no-gutters border rounded overflow-hidden flex-md-row mb-3 shadow-sm h-md-250 position-relative">
+        <div class="row p-3">
+            <div class="col">
+                <button class="btn btn-secondary" id="edit">修改</button>
+                <button class="btn btn-secondary" id="remove">删除</button>
+                <button class="btn btn-secondary" id="delay">发布延误</button>
+                <button class="btn btn-secondary" id="cancel">发布取消</button>
+                <button class="btn btn-secondary" id="order">购票申请</button>
+                <button class="btn btn-secondary" id="withdraw">退票申请</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pt-4">
+    <div class="row ml-2">
+        <h5>航班售票</h5>
+    </div>
+</div>
+
+<div class="container py-2">
+
+    {{#each tickets}}
+        <div class="container bg-white no-gutters border rounded overflow-hidden flex-md-row mb-3 shadow-sm h-md-250 position-relative">
+            <div class="row px-3 py-2">
+                <div class="col-2 px-0">
+                    <small class="my-auto"><b>客票ID: {{id}}</b></small>
+                </div>
+            </div>
+            <div class="row px-3">
+                <div class="col">
+                    <p>顾客手机：{{phone}}</p>
+                </div>
+            </div>
+        </div>
+    {{/each}}
+</div>
