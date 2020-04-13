@@ -3,7 +3,7 @@
  */
 ;
 requirejs.config({
-    baseUrl: "/app/js",
+    baseUrl: "/js",
     shim: {
         bootstrap: {
             deps: [ "jquery" ]

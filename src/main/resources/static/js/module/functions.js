@@ -5,7 +5,7 @@ define([
         'jquery',
         'handlebars',
         'axios',
-        'static/js/module/constants',
+        'module/constants',
         'bootstrap'],
     function ($, Handlebars, axios, constants, _) {
 

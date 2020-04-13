@@ -1,0 +1,64 @@
+{{#each plans}}
+<div class="container bg-white no-gutters border rounded overflow-hidden flex-md-row mb-3 shadow-sm h-md-250 position-relative">
+    <div class="row px-3 py-2">
+        <div class="col-2 px-0">
+            <small class="my-auto"><b>转机次数：{{flightCount}}</b></small>
+        </div>
+    </div>
+    <div class="row px-3">
+        <table class="col-10 table table-striped table-hover">
+            <thead>
+            <tr>
+                <td style="width: 20%">
+                    <small class="my-auto">航班</small>
+                </td>
+                <td style="width: 20%">
+                    <small class="my-auto">起飞地（时间）</small>
+                </td>
+                <td style="width: 20%">
+                    <small class="my-auto">降落地（时间）</small>
+                </td>
+                <td style="width: 20%">
+                    <small class="my-auto">飞行时间（小时）</small>
+                </td>
+                <td style="width: 10%">
+                    <small class="my-auto">票价</small>
+                </td>
+                <td style="width: 10%">
+                    <small class="my-auto">余票</small>
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each flights}}
+            <tr>
+                <td style="width: 20%">
+                    <small class="my-auto">{{airlineName}} {{flightNo}}</small>
+                </td>
+                <td style="width: 20%">
+                    <small class="my-auto">{{from}}（{{departureTime}}）</small>
+                </td>
+                <td style="width: 20%">
+                    <small class="my-auto">{{to}}（{{landingTime}}）</small>
+                </td>
+                <td style="width: 20%">
+                    <small class="my-auto">{{flightTimeHour}}</small>
+                </td>
+                <td style="width: 10%">
+                    <small class="my-auto">¥ {{ticketPrice}}</small>
+                </td>
+                <td style="width: 10%">
+                    <small class="my-auto">{{restCabin}}</small>
+                </td>
+            </tr>
+            {{/each}}
+            </tbody>
+        </table>
+
+        <div class="col p-2 d-flex flex-column position-static">
+            <p class="text-center"><b>¥ {{totalCost}}</b></p>
+            <p class="text-center"><small>总时长（小时）：{{totalTimeHour}}</small></p>
+        </div>
+    </div>
+</div>
+{{/each}}
