@@ -1,10 +1,170 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>航班管理 - KFlight</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://v4.bootcss.com/docs/4.3/dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="https://v4.bootcss.com/docs/4.3/examples/album/album.css" rel="stylesheet">
 </head>
 <body>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="/">KFlight</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+                aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">主页</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="flight.html">航班管理 <span class="sr-only">(当前)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="search/index.html">航班检索</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="city.html">城市一览</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="plan.html">转机规划</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main role="main">
+
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">航班管理</h1>
+            <p class="lead text-muted">输入航班号可快速跳转某一航班，点击详细信息之后可以更改、删除航班信息。</p>
+            <input class="form-control" type="text" placeholder="航班号">
+            <p>
+                <button id="btn-block-add" class="btn btn-primary my-2">添加航班</button>
+                <button id="btn-batch-add" class="btn btn-secondary my-2">从文件添加</button>
+            </p>
+        </div>
+    </section>
+
+    <div class="album py-5 bg-light">
+        <div id="plane-list" class="container">
+        </div>
+    </div>
+
+</main>
+
+<footer class="text-muted">
+    <div class="container">
+        <p class="float-right">
+            <a href="#">返回顶部</a>
+        </p>
+        <p>KFlight</p>
+        <p>Powered By Springboot + Bootstrap v4</p>
+    </div>
+</footer>
+
+<!-- 添加航班模态框 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalTitle">添加航班</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="addModalBody">
+                <div class="form-group">
+                    <label for="flightNo">航班号</label>
+                    <input type="text" class="form-control" id="flightNo"/>
+                </div>
+                <div class="form-group">
+                    <label for="airlineName">航空公司</label>
+                    <input type="text" class="form-control" id="airlineName"/>
+                </div>
+                <div class="form-group">
+                    <label for="departureTime">起飞时间</label>
+                    <input type="text" class="form-control" id="departureTime"/>
+                </div>
+                <div class="form-group">
+                    <label for="landingTime">降落时间</label>
+                    <input type="text" class="form-control" id="landingTime"/>
+                </div>
+                <div class="form-group">
+                    <label for="from">出发地</label>
+                    <input type="text" class="form-control" id="from"/>
+                </div>
+                <div class="form-group">
+                    <label for="to">降落地</label>
+                    <input type="text" class="form-control" id="to"/>
+                </div>
+                <div class="form-group">
+                    <label for="middle">经停</label>
+                    <input type="text" class="form-control" id="middle"/>
+                </div>
+                <div class="form-group">
+                    <label for="middleTime">经停时间</label>
+                    <input type="text" class="form-control" id="middleTime"/>
+                </div>
+                <div class="form-group">
+                    <label for="totalCabin">总客舱数</label>
+                    <input type="text" class="form-control" id="totalCabin"/>
+                </div>
+                <div class="form-group">
+                    <label for="restCabin">剩余客舱数</label>
+                    <input type="text" class="form-control" id="restCabin"/>
+                </div>
+                <div class="form-group">
+                    <label for="ticketPrice">票价</label>
+                    <input type="text" class="form-control" id="ticketPrice"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="block-add" type="button" class="btn btn-primary" data-dismiss="modal">添加</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 批量添加模态框 -->
+<div class="modal fade" id="batchModal" tabindex="-1" role="dialog" aria-labelledby="batchModalTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batchModalTitle">批量添加航班</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="batchModalBody">
+                <div class="form-group">
+                    <label for="filePath">航班文件地址（Json格式）</label>
+                    <input type="text" class="form-control" id="filePath"/>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="batch-add" type="button" class="btn btn-primary" data-dismiss="modal">导入</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.bootcss.com/require.js/2.3.6/require.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/flight.js"></script>
 </body>
 </html>
