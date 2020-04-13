@@ -38,6 +38,7 @@ public class TicketService {
             order.setID(tickets.size());
             order.setState(EntryTicketOrder.State.DONE);
             tickets.add(order);
+            updateIds(flight);
         } else {
             // 没有票，存入队列
             order.setState(EntryTicketOrder.State.QUEUED);
@@ -61,7 +62,7 @@ public class TicketService {
         found.forEach(tickets::remove);
         flight.setRestCabin(flight.getRestCabin() + found.size());
         // 触发退票事件
-        KflightApplication.EVENT_BUS.post(new TicketWithdrawEvent(flight, phone));
+        checkQueue(new TicketWithdrawEvent(flight, phone));
     }
 
     public static List<EntryTicketOrder> getTicketsInQueue() {
@@ -74,7 +75,7 @@ public class TicketService {
      * 检查队列中的票是否可售
      */
     @SubscribeEvent
-    public synchronized void checkQueue(TicketWithdrawEvent event) {
+    public static synchronized void checkQueue(TicketWithdrawEvent event) {
         var rest = new LinkedQueue<EntryTicketOrder>();
         while (!QUEUE.isEmpty()) {
             var order = QUEUE.popFront();
@@ -86,6 +87,7 @@ public class TicketService {
                 order.setID(tickets.size());
                 order.setState(EntryTicketOrder.State.DONE);
                 tickets.add(order);
+                updateIds(flight);
             } else {
                 // 没有票，存入队列
                 order.setState(EntryTicketOrder.State.QUEUED);
@@ -97,6 +99,12 @@ public class TicketService {
             var cur = rest.popFront();
             if (isFlightBooking(cur.getFlight()))
                 QUEUE.push(cur);
+        }
+    }
+
+    private static synchronized void updateIds(EntryFlight flight) {
+        for (int i = 0; i < flight.getTickets().size(); i++) {
+            flight.getTickets().get(i).setID(i);
         }
     }
 

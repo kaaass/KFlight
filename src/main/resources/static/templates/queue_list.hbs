@@ -1,0 +1,19 @@
+{{#each queue}}
+    <div class="container bg-white no-gutters border rounded overflow-hidden flex-md-row mb-3 shadow-sm h-md-250 position-relative">
+        <div class="row px-3 py-2">
+            <div class="col-2 px-0">
+                <small class="my-auto"><b>客票ID: {{id}}</b></small>
+            </div>
+        </div>
+        <div class="row px-3">
+            <div class="col">
+                <p>出票状态：{{state}}</p>
+            </div>
+        </div>
+        <div class="row px-3">
+            <div class="col">
+                <p>顾客手机：{{phone}}</p>
+            </div>
+        </div>
+    </div>
+{{/each}}
