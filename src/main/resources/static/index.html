@@ -1,10 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>Index</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+
+    <title>首页 - KFlight</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://v4.bootcss.com/docs/4.3/dist/css/bootstrap.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="https://v4.bootcss.com/docs/4.3/examples/album/album.css" rel="stylesheet">
 </head>
 <body>
-<p>index</p>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="/">KFlight</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+                aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">主页 <span class="sr-only">(当前)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="flight.html">航班管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="search/index.html">航班检索</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="city.html">城市一览</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="plan.html">转机规划</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<main role="main">
+
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">航班管理系统</h1>
+            <p class="lead text-muted">欢迎使用航班管理系统，本系统供管理人员快速管理航班、票务、为顾客推荐行程。</p>
+            <p>
+                <a href="search/index.html" class="btn btn-primary my-2">航班检索</a>
+                <a href="plan.html" class="btn btn-secondary my-2">转机规划</a>
+            </p>
+        </div>
+    </section>
+
+</main>
+
+<footer class="text-muted">
+    <div class="container">
+        <p class="float-right">
+            <a href="#">返回顶部</a>
+        </p>
+        <p>KFlight</p>
+        <p>Powered By Springboot + Bootstrap v4</p>
+    </div>
+</footer>
+
 </body>
 </html>
