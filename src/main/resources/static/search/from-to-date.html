@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
 
-    <title>航班检索 - KFlight</title>
+    <title>按出发地、目的地、日期检索 - KFlight</title>
 
     <!-- Bootstrap core CSS -->
     <link href="https://v4.bootcss.com/docs/4.3/dist/css/bootstrap.css" rel="stylesheet">
@@ -47,17 +47,22 @@
 <main role="main">
 
     <section class="jumbotron text-center">
-        <div class="container">
-            <h1 class="jumbotron-heading">航班检索</h1>
-            <p class="lead text-muted">请选择检索航班使用的条件。</p>
+        <div class="container-fluid">
+            <h1 class="jumbotron-heading">按出发地、目的地、日期检索</h1>
+            <br>
+            <p>按照一定限制条件对航班进行检索，并对检索结果按要求进行排序。</p>
+            <br>
+            <input id="from" class="form-control" type="text" placeholder="出发城市">
+            <input id="to" class="form-control" type="text" placeholder="目的城市">
+            <input id="date" class="form-control" type="text" placeholder="旅行日期">
+            <input id="sort" class="form-control" type="text" value="dpR" placeholder="排序方式">
+            <button id="about-sort" type="button" class="btn btn-link">关于排序方式</button>
         </div>
     </section>
 
-    <div class="list-group">
-        <a href="from-to-date.html" class="list-group-item list-group-item-action">按出发地、目的地、日期</a>
-        <a href="from-date.html" class="list-group-item list-group-item-action">按出发地、日期</a>
-        <a href="to-date.html" class="list-group-item list-group-item-action">按目的地、日期</a>
-        <a href="between.html" class="list-group-item list-group-item-action">按时间范围</a>
+    <div class="album py-5 bg-light">
+        <div id="plane-list" class="container">
+        </div>
     </div>
 
 </main>
@@ -72,5 +77,8 @@
     </div>
 </footer>
 
+<script src="https://cdn.bootcss.com/require.js/2.3.6/require.min.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/search/from-to-date.js"></script>
 </body>
 </html>

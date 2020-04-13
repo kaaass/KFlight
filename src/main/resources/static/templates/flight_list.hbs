@@ -1,0 +1,37 @@
+{{#each flights}}
+<div flight-id="{{id}}" class="flight-item container bg-white no-gutters border rounded overflow-hidden flex-md-row mb-3 shadow-sm h-md-250 position-relative">
+    <div class="row px-3 py-2">
+        <div class="col-2 px-0">
+            <small class="my-auto"><b>航班ID: {{id}}</b></small>
+        </div>
+    </div>
+    <div class="row px-3 pb-3">
+
+        <div class="col-2 px-4 py-2 d-flex flex-column position-static">
+            <p><b>{{airlineName}} {{flightNo}}</b></p>
+            <p><small>航班状态：{{state}}</small></p>
+        </div>
+
+        <div class="col-4 px-5 py-2 d-flex flex-column position-static">
+            <h2 class="text-center">{{from}} → {{to}}</h2>
+            <small class="text-center">起飞时间：{{departureTime}}</small>
+            <small class="text-center">降落时间：{{landingTime}}</small>
+            <small class="text-center">飞行时间（小时）：{{flightTimeHour}}</small>
+        </div>
+
+        <div class="col px-4 py-2 d-flex flex-column position-static">
+            <p><b>¥ {{ticketPrice}}</b></p>
+            <p><small>剩余票数：{{restCabin}}</small></p>
+            <p><small>客舱大小：{{totalCabin}}</small></p>
+        </div>
+
+        <div class="col d-flex flex-column position-static">
+            <a class="btn btn-primary" href="/detail.html?id={{id}}">购票/查看详情</a>
+            {{#if manage}}
+            <button class="btn btn-link edit"><small>修改</small></button>
+            <button class="btn btn-link delete"><small>删除</small></button>
+            {{/if}}
+        </div>
+    </div>
+</div>
+{{/each}}
